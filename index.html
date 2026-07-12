@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 게임 트렌드 대시보드</title>
+<style>
+:root{
+  --bg:#0f1117; --card:#1a1d27; --card2:#222635; --text:#e8eaf0; --sub:#8b90a0;
+  --accent:#6c8cff; --accent2:#ff6c8c; --border:#2a2e3d; --green:#4ade80;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Apple SD Gothic Neo','Noto Sans KR',sans-serif;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:8px 0 16px}
+h1{font-size:1.35rem}
+#updated{color:var(--sub);font-size:.8rem}
+/* 탭 */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.tab{background:none;border:none;color:var(--sub);font-size:1rem;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.on{color:var(--text);border-bottom-color:var(--accent);font-weight:600}
+/* 칩 */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{background:var(--card);border:1px solid var(--border);color:var(--sub);border-radius:20px;padding:6px 14px;font-size:.85rem;cursor:pointer}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* 비디오 그리드 */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.vcard{background:var(--card);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:transform .15s}
+.vcard:hover{transform:translateY(-3px);border-color:var(--accent)}
+.vcard img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--card2)}
+.vbody{padding:10px 12px}
+.vrank{color:var(--accent);font-weight:700;font-size:.8rem}
+.vtitle{font-size:.9rem;line-height:1.35;margin:4px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vmeta{color:var(--sub);font-size:.78rem}
+/* 뉴스 */
+.news-item{display:block;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;text-decoration:none;color:var(--text)}
+.news-item:hover{border-color:var(--accent)}
+.news-title{font-size:.95rem;line-height:1.4}
+.news-meta{color:var(--sub);font-size:.78rem;margin-top:4px}
+.news-src{color:var(--accent);font-weight:600}
+/* 행사 */
+.egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.ecard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
+.ecard.live{border-color:var(--green)}
+.ecard.past{opacity:.45}
+.dday{position:absolute;top:14px;right:14px;background:var(--accent);color:#fff;border-radius:8px;padding:3px 10px;font-weight:700;font-size:.85rem}
+.dday.live{background:var(--green);color:#0f1117}
+.dday.past{background:var(--card2);color:var(--sub)}
+.ename{font-size:1.05rem;font-weight:700;margin-bottom:6px;padding-right:70px}
+.ename a{color:var(--text);text-decoration:none}
+.ename a:hover{color:var(--accent)}
+.eregion{display:inline-block;font-size:.75rem;background:var(--card2);border-radius:6px;padding:2px 8px;margin-bottom:8px;color:var(--accent2)}
+.einfo{color:var(--sub);font-size:.85rem;line-height:1.6}
+.empty{color:var(--sub);text-align:center;padding:48px 16px;line-height:1.8}
+section{display:none}section.on{display:block}
+@media(max-width:600px){
+  .vgrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  h1{font-size:1.15rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🎮 게임 트렌드 대시보드</h1>
+    <span id="updated"></span>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="trend">📈 트렌드</button>
+    <button class="tab" data-tab="news">📰 뉴스</button>
+    <button class="tab" data-tab="events">📅 행사</button>
+  </div>
+
+  <section id="trend" class="on">
+    <div class="chips" id="region-chips"></div>
+    <div class="vgrid" id="videos"></div>
+  </section>
+
+  <section id="news">
+    <div class="chips" id="news-chips"></div>
+    <div id="news-list"></div>
+  </section>
+
+  <section id="events">
+    <div class="egrid" id="event-list"></div>
+  </section>
+</div>
+
+<script>
+let DATA = null, EVENTS = [], curRegion = null, curSrc = 'all';
+
+const fmt = n => n >= 100000000 ? (n/100000000).toFixed(1)+'억' : n >= 10000 ? (n/10000).toFixed(1)+'만' : n.toLocaleString();
+const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+const timeAgo = iso => {
+  if(!iso) return '';
+  const diff = (Date.now() - new Date(iso)) / 3600000;
+  if (diff < 1) return '방금'; if (diff < 24) return Math.floor(diff)+'시간 전';
+  return Math.floor(diff/24)+'일 전';
+};
+
+// 탭 전환
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('section').forEach(x => x.classList.remove('on'));
+  t.classList.add('on');
+  document.getElementById(t.dataset.tab).classList.add('on');
+});
+
+function renderRegions(){
+  const regions = [];
+  for (const [code, r] of Object.entries(DATA.youtube || {}))
+    if (r.videos?.length) regions.push({key: code, label: r.name});
+  if (DATA.bilibili?.length) regions.push({key: 'CN', label: '중국(Bilibili)'});
+  const box = document.getElementById('region-chips');
+  if (!regions.length){
+    document.getElementById('videos').innerHTML =
+      '<div class="empty" style="grid-column:1/-1">아직 트렌드 데이터가 없습니다.<br>YouTube API 키 등록 후 수집이 실행되면 표시됩니다.</div>';
+    return;
+  }
+  curRegion = regions[0].key;
+  box.innerHTML = regions.map(r =>
+    `<button class="chip${r.key===curRegion?' on':''}" data-r="${r.key}">${r.label}</button>`).join('');
+  box.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    curRegion = c.dataset.r;
+    box.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x===c));
+    renderVideos();
+  });
+  renderVideos();
+}
+
+function renderVideos(){
+  const vids = curRegion==='CN' ? DATA.bilibili : (DATA.youtube[curRegion]?.videos || []);
+  document.getElementById('videos').innerHTML = vids.map((v,i) => `
+    <a class="vcard" href="${esc(v.url)}" target="_blank" rel="noopener">
+      ${v.thumbnail ? `<img src="${esc(v.thumbnail)}" loading="lazy" referrerpolicy="no-referrer" alt="">` : ''}
+      <div class="vbody">
+        <span class="vrank">#${i+1}</span>
+        <div class="vtitle">${esc(v.title)}</div>
+        <div class="vmeta">${esc(v.channel)} · 조회 ${fmt(v.views)}${v.publishedAt ? ' · '+timeAgo(v.publishedAt) : ''}</div>
+      </div>
+    </a>`).join('');
+}
+
+function renderNewsChips(){
+  const srcs = [...new Set((DATA.news||[]).map(a => a.source))];
+  const box = document.getElementById('news-chips');
+  if (!srcs.length){
+    document.getElementById('news-list').innerHTML = '<div class="empty">아직 뉴스 데이터가 없습니다.</div>';
+    return;
+  }
+  box.innerHTML = `<button class="chip on" data-s="all">전체</button>` +
+    srcs.map(s => `<button class="chip" data-s="${esc(s)}">${esc(s)}</button>`).join('');
+  box.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    curSrc = c.dataset.s;
+    box.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x===c));
+    renderNews();
+  });
+  renderNews();
+}
+
+function renderNews(){
+  const list = (DATA.news||[]).filter(a => curSrc==='all' || a.source===curSrc).slice(0,80);
+  document.getElementById('news-list').innerHTML = list.map(a => `
+    <a class="news-item" href="${esc(a.url)}" target="_blank" rel="noopener">
+      <div class="news-title">${esc(a.title)}</div>
+      <div class="news-meta"><span class="news-src">${esc(a.source)}</span> · ${timeAgo(a.publishedAt)}</div>
+    </a>`).join('');
+}
+
+function renderEvents(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const evs = EVENTS.map(e => {
+    const s = new Date(e.start+'T00:00:00'), en = new Date(e.end+'T00:00:00');
+    const d = Math.round((s - today) / 86400000);
+    let state, label;
+    if (today >= s && today <= en){ state='live'; label='진행 중'; }
+    else if (d > 0){ state='up'; label='D-'+d; }
+    else { state='past'; label='종료'; }
+    return {...e, state, label, sortKey: state==='live' ? -1e9 : state==='up' ? d : 1e9 - +s};
+  }).sort((a,b) => a.sortKey - b.sortKey);
+
+  document.getElementById('event-list').innerHTML = evs.map(e => `
+    <div class="ecard ${e.state==='live'?'live':e.state==='past'?'past':''}">
+      <span class="dday ${e.state==='live'?'live':e.state==='past'?'past':''}">${e.label}</span>
+      <div class="ename"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.name)}</a></div>
+      <span class="eregion">${esc(e.region)}</span>
+      <div class="einfo">
+        📍 ${esc(e.location)}<br>
+        🗓 ${e.start}${e.end !== e.start ? ' ~ ' + e.end : ''}
+        ${e.note ? '<br>💬 ' + esc(e.note) : ''}
+      </div>
+    </div>`).join('');
+}
+
+async function init(){
+  try {
+    const [d, ev] = await Promise.all([
+      fetch('data.json?t='+Date.now()).then(r => r.json()).catch(() => ({youtube:{},bilibili:[],news:[]})),
+      fetch('events.json?t='+Date.now()).then(r => r.json()).catch(() => ({events:[]})),
+    ]);
+    DATA = d; EVENTS = ev.events || [];
+    if (d.generated_at)
+      document.getElementById('updated').textContent =
+        '업데이트: ' + new Date(d.generated_at).toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+    renderRegions();
+    renderNewsChips();
+    renderEvents();
+  } catch(e) {
+    document.querySelector('.wrap').insertAdjacentHTML('beforeend',
+      '<div class="empty">데이터를 불러오지 못했습니다: '+esc(e.message)+'</div>');
+  }
+}
+init();
+</script>
+</body>
+</html>

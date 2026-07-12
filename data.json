@@ -1,0 +1,83 @@
+{
+ "generated_at": "2026-07-12T01:46:16.700938+00:00",
+ "_note": "샘플 데이터입니다. collector.py 실행 시 실제 데이터로 교체됩니다.",
+ "youtube": {
+  "KR": {
+   "name": "한국",
+   "videos": [
+    {
+     "id": "s1",
+     "title": "[샘플] 신작 RPG 첫 공개 트레일러 반응",
+     "channel": "게임채널A",
+     "publishedAt": "2026-07-11T20:46:16.700938+00:00",
+     "views": 1250000,
+     "thumbnail": "",
+     "url": "https://www.youtube.com"
+    },
+    {
+     "id": "s2",
+     "title": "[샘플] 이번 주 인기 게임 TOP 10",
+     "channel": "게임채널B",
+     "publishedAt": "2026-07-11T13:46:16.700938+00:00",
+     "views": 890000,
+     "thumbnail": "",
+     "url": "https://www.youtube.com"
+    }
+   ]
+  },
+  "US": {
+   "name": "미국",
+   "videos": [
+    {
+     "id": "s3",
+     "title": "[Sample] New Gameplay Reveal Reaction",
+     "channel": "GameChannelC",
+     "publishedAt": "2026-07-11T22:46:16.700938+00:00",
+     "views": 2100000,
+     "thumbnail": "",
+     "url": "https://www.youtube.com"
+    }
+   ]
+  },
+  "JP": {
+   "name": "일본",
+   "videos": [
+    {
+     "id": "s4",
+     "title": "[サンプル] 新作ゲーム実況",
+     "channel": "ゲームチャンネルD",
+     "publishedAt": "2026-07-11T17:46:16.700938+00:00",
+     "views": 540000,
+     "thumbnail": "",
+     "url": "https://www.youtube.com"
+    }
+   ]
+  }
+ },
+ "bilibili": [
+  {
+   "id": "s5",
+   "title": "[样本] 热门游戏排行",
+   "channel": "频道E",
+   "views": 3400000,
+   "thumbnail": "",
+   "url": "https://www.bilibili.com"
+  }
+ ],
+ "news": [
+  {
+   "source": "디스이즈게임",
+   "lang": "ko",
+   "title": "[샘플] 국내 게임업계 주요 소식",
+   "url": "https://www.thisisgame.com",
+   "publishedAt": "2026-07-11T23:46:16.700938+00:00"
+  },
+  {
+   "source": "IGN",
+   "lang": "en",
+   "title": "[Sample] Major Game Industry News",
+   "url": "https://www.ign.com",
+   "publishedAt": "2026-07-11T19:46:16.700938+00:00"
+  }
+ ]
+}

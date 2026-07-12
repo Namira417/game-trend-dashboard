@@ -1,0 +1,77 @@
+{
+  "_comment": "행사 추가/수정은 이 파일만 편집하면 됩니다. 날짜 형식: YYYY-MM-DD",
+  "events": [
+    {
+      "name": "ChinaJoy 2026",
+      "region": "중국",
+      "location": "상하이 신국제엑스포센터",
+      "start": "2026-07-31",
+      "end": "2026-08-03",
+      "url": "https://en.chinajoy.net/",
+      "note": "중국 최대 게임쇼"
+    },
+    {
+      "name": "BIC Festival 2026 (부산인디커넥트)",
+      "region": "한국",
+      "location": "부산 BEXCO",
+      "start": "2026-08-14",
+      "end": "2026-08-16",
+      "url": "https://bicfest.org/",
+      "note": "오프라인 행사 기준. 온라인은 8/7~8/28"
+    },
+    {
+      "name": "gamescom 2026",
+      "region": "독일",
+      "location": "쾰른 Koelnmesse",
+      "start": "2026-08-26",
+      "end": "2026-08-30",
+      "url": "https://www.gamescom.global/",
+      "note": "유럽 최대 게임쇼, Opening Night Live 포함"
+    },
+    {
+      "name": "도쿄게임쇼 (TGS) 2026",
+      "region": "일본",
+      "location": "지바 마쿠하리 멧세",
+      "start": "2026-09-17",
+      "end": "2026-09-21",
+      "url": "https://tgs.cesa.or.jp/2026/en",
+      "note": "30주년, 5일 개최. 일반 공개 9/19~21"
+    },
+    {
+      "name": "지스타 (G-STAR) 2026",
+      "region": "한국",
+      "location": "부산 BEXCO",
+      "start": "2026-11-19",
+      "end": "2026-11-22",
+      "url": "https://www.gstar.or.kr/",
+      "note": "국내 최대 게임쇼. B2B는 11/19~21"
+    },
+    {
+      "name": "The Game Awards 2026",
+      "region": "미국",
+      "location": "LA Peacock Theater",
+      "start": "2026-12-10",
+      "end": "2026-12-10",
+      "url": "https://thegameawards.com/",
+      "note": "GOTY 시상식"
+    },
+    {
+      "name": "PlayX4 2027 (플레이엑스포)",
+      "region": "한국",
+      "location": "고양 킨텍스",
+      "start": "2027-05-20",
+      "end": "2027-05-23",
+      "url": "https://www.playx4.or.kr/",
+      "note": "날짜 미확정(예년 5월 기준 추정) — 확정 시 수정"
+    },
+    {
+      "name": "Summer Game Fest 2027",
+      "region": "미국",
+      "location": "LA (온라인 중계)",
+      "start": "2027-06-04",
+      "end": "2027-06-04",
+      "url": "https://www.summergamefest.com/",
+      "note": "날짜 미확정(예년 6월 초 기준 추정)"
+    }
+  ]
+}
