@@ -237,11 +237,25 @@ def generate_insights(data):
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.4, "response_mime_type": "application/json"},
     }
-    for model in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"):
+    from urllib.error import HTTPError
+    for model in ("gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"):
         try:
-            resp = http_post_json(
-                "https://generativelanguage.googleapis.com/v1beta/models/" + model
-                + ":generateContent?key=" + GEMINI_API_KEY, payload)
+            url = ("https://generativelanguage.googleapis.com/v1beta/models/"
+                   + model + ":generateContent?key=" + GEMINI_API_KEY)
+            try:
+                resp = http_post_json(url, payload)
+            except HTTPError as he:
+                if he.code == 429:  # 무료 티어 순간 제한 - 30초 후 1회 재시도
+                    print("[insight] " + model + " 429 - 30초 후 재시도")
+                    time.sleep(30)
+                    resp = http_post_json(url, payload)
+                else:
+                    detail = ""
+                    try:
+                        detail = he.read().decode("utf-8", "ignore")[:300]
+                    except Exception:
+                        pass
+                    raise Exception("HTTP " + str(he.code) + " " + detail)
             text = resp["candidates"][0]["content"]["parts"][0]["text"]
             text = re.sub(r"^```(json)?|```$", "", text.strip(), flags=re.M).strip()
             result = json.loads(text)
