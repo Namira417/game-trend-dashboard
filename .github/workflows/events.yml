@@ -1,0 +1,33 @@
+name: 행사 일정 갱신
+
+on:
+  schedule:
+    - cron: "30 22 * * 0"   # 매주 월요일 07:30 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-events:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 행사 일정 점검
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python events_updater.py
+
+      - name: 커밋 & 푸시
+        run: |
+          git config user.name "trend-bot"
+          git config user.email "actions@github.com"
+          git add events.json
+          git diff --cached --quiet || git commit -m "events: 주간 갱신 $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push

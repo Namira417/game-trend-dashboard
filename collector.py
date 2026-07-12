@@ -21,6 +21,8 @@ from xml.etree import ElementTree as ET
 YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY", "")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")  # 없으면 요약 생략
 
+WARNINGS = []  # 한도 초과 등 이상 상황 - 대시보드에 표시됨
+
 YT_REGIONS = {
     "KR": "한국",
     "US": "미국",
@@ -96,6 +98,8 @@ def collect_youtube():
             print("[youtube] " + code + " " + str(len(videos)) + "개")
         except Exception as e:
             print("[youtube] " + code + " 실패: " + str(e))
+            if "403" in str(e):
+                WARNINGS.append("YouTube API 무료 한도 초과 또는 키 문제 (" + code + " 수집 실패)")
         time.sleep(0.3)
     return out
 
@@ -229,6 +233,7 @@ def generate_insights(data):
         '  "CN": "중국(Bilibili)에서 뜨는 게임/화제 한두 문장",\n'
         '  "common": "여러 지역에서 공통적으로 뜨는 게임이나 트렌드 한두 문장"\n'
         " },\n"
+        ' "news_brief": ["오늘 게임 뉴스 전반에서 중요한 흐름/사건 2~4개, 각 한 문장, 한국어"],\n'
         ' "translations": {"뉴스번호": "해당 해외 기사 제목의 자연스러운 한국어 한줄 요약"}\n'
         "}\n"
         "translations는 위 해외 뉴스 번호 전부를 포함하라. 데이터가 부족한 지역은 \"데이터 부족\"이라고 써라."
@@ -256,23 +261,27 @@ def generate_insights(data):
     except Exception as e:
         print("[insight] 모델 목록 조회 실패: " + str(e))
     candidates += ["gemini-flash-latest", "gemini-flash-lite-latest"]  # 폴백
-    for model in dict.fromkeys(candidates):
+    last_err = ""
+    for model in list(dict.fromkeys(candidates))[:4]:  # 최대 4개 모델까지만 시도
         try:
             url = ("https://generativelanguage.googleapis.com/v1beta/models/"
                    + model + ":generateContent?key=" + GEMINI_API_KEY)
             try:
                 resp = http_post_json(url, payload)
             except HTTPError as he:
-                if he.code == 429:  # 무료 티어 순간 제한 - 30초 후 1회 재시도
-                    print("[insight] " + model + " 429 - 30초 후 재시도")
+                detail = ""
+                try:
+                    detail = he.read().decode("utf-8", "ignore")[:500]
+                except Exception:
+                    pass
+                if he.code == 429:  # 순간 제한이면 재시도, 할당량 0이면 즉시 포기
+                    print("[insight] " + model + " 429 상세: " + detail)
+                    if '"quotaValue": "0"' in detail or "limit: 0" in detail:
+                        raise Exception("할당량 0 - 프로젝트 설정 문제")
+                    print("[insight] " + model + " 30초 후 재시도")
                     time.sleep(30)
                     resp = http_post_json(url, payload)
                 else:
-                    detail = ""
-                    try:
-                        detail = he.read().decode("utf-8", "ignore")[:300]
-                    except Exception:
-                        pass
                     raise Exception("HTTP " + str(he.code) + " " + detail)
             text = resp["candidates"][0]["content"]["parts"][0]["text"]
             text = re.sub(r"^```(json)?|```$", "", text.strip(), flags=re.M).strip()
@@ -280,6 +289,7 @@ def generate_insights(data):
             data["insights"] = {
                 "highlights": result.get("highlights", []),
                 "regional": result.get("regional", {}),
+                "news_brief": result.get("news_brief", []),
                 "model": model,
             }
             n_tr = 0
@@ -292,8 +302,13 @@ def generate_insights(data):
             print("[insight] " + model + " - 하이라이트 " + str(len(data["insights"]["highlights"])) + "개, 번역 " + str(n_tr) + "개")
             return
         except Exception as e:
+            last_err = str(e)
             print("[insight] " + model + " 실패: " + str(e))
     print("[insight] 모든 모델 실패 - 요약 없이 진행")
+    if "429" in last_err or "할당량" in last_err:
+        WARNINGS.append("Gemini 무료 한도 초과 - 오늘 인사이트/한글요약이 생략됨 (내일 자동 복구)")
+    elif last_err:
+        WARNINGS.append("Gemini 호출 실패 - 인사이트 생략됨")
 
 
 def main():
@@ -304,6 +319,9 @@ def main():
         "news": collect_news(),
     }
     generate_insights(data)
+    data["warnings"] = WARNINGS
+    if WARNINGS:
+        print("경고: " + " / ".join(WARNINGS))
     out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
