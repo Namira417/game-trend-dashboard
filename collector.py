@@ -211,13 +211,28 @@ def generate_insights(data):
     if data.get("bilibili"):
         blocks.append("### 중국(CN) Bilibili 인기 영상\n" +
                       "\n".join(v["title"] for v in data["bilibili"][:12]))
-    ko_titles = [a["title"] for a in data.get("news", []) if a["lang"] == "ko"][:25]
-    if ko_titles:
-        blocks.append("### 한국 게임 뉴스 제목\n" + "\n".join(ko_titles))
-    foreign = [(i, a) for i, a in enumerate(data.get("news", [])) if a["lang"] != "ko"][:40]
-    if foreign:
-        blocks.append("### 해외 게임 뉴스 제목 (번호: 제목)\n" +
-                      "\n".join(str(i) + ": (" + a["source"] + ") " + a["title"] for i, a in foreign))
+    news_list = data.get("news", [])[:80]
+    if news_list:
+        blocks.append("### 오늘 게임 뉴스 제목 (번호: [언어] (매체) 제목)\n" +
+                      "\n".join(str(i) + ": [" + a["lang"] + "] (" + a["source"] + ") " + a["title"]
+                                for i, a in enumerate(news_list)))
+    foreign_idx = [str(i) for i, a in enumerate(news_list) if a["lang"] != "ko"][:40]
+    if foreign_idx:
+        blocks.append("### 한국어 번역 필요한 뉴스 번호\n" + ", ".join(foreign_idx))
+    # 지난 며칠 히스토리 (지속 트렌드 판단용)
+    try:
+        hp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "history.json")
+        hist = json.load(open(hp, encoding="utf-8"))
+        today = data.get("generated_at", "")[:10]
+        prev = [h for h in hist if h.get("date") != today][-6:]
+        if prev:
+            lines = []
+            for day in prev:
+                for code, ts in day.get("regions", {}).items():
+                    lines.append(day["date"] + " " + code + ": " + " | ".join(ts))
+            blocks.append("### 지난 며칠간 지역별 인기 영상 TOP5 히스토리\n" + "\n".join(lines))
+    except Exception:
+        pass
     if not blocks:
         print("[insight] 요약할 데이터 없음 - 건너뜀")
         return
@@ -249,7 +264,7 @@ def generate_insights(data):
         + "\n\n".join(blocks) +
         "\n\n다음 JSON 형식으로만 답하라(코드블록 없이):\n"
         "{\n"
-        ' "highlights": ["오늘 게임 업계에서 주목할 핵심 포인트 3~5개, 각 한 문장, 한국어"],\n'
+        ' "highlights": [{"text": "오늘 주목할 핵심 포인트 한 문장", "news_refs": [근거가 된 뉴스 번호들, 없으면 빈 배열]}],\n'
         ' "regional": {\n'
         '  "KR": {"summary": "한국에서 지금 뜨는 게임/화제 한두 문장", "tags": ["핵심 게임명/키워드 태그 2~5개"]},\n'
         '  "NA": {"summary": "북미(미국·캐나다)에서 뜨는 게임/화제 한두 문장", "tags": ["..."]},\n'
@@ -263,13 +278,16 @@ def generate_insights(data):
         '  "JP": {"summary": ["일본 게임 뉴스 핵심 1~3개, 각 한 문장, 한국어"], "tags": ["..."]},\n'
         '  "CN": {"summary": ["중국 게임 뉴스 핵심 1~3개, 각 한 문장, 한국어"], "tags": ["..."]}\n'
         " },\n"
-        ' "for_me": ["위 사용자 정보 관점에서 오늘 데이터가 주는 실질적 시사점 2~3개, 각 한 문장"],\n'
+        ' "for_me": ["사용자 관점에서 주목할 만한, 데이터에서 직접 관찰된 사실과 그 맥락 2~3개, 각 한 문장"],\n'
         ' "watchlist": [{"keyword": "워치리스트 키워드", "note": "오늘 데이터에 근거한 관련 동향 1~2문장"}],\n'
         ' "translations": {"뉴스번호": "해당 해외 기사 제목의 자연스러운 한국어 한줄 요약"}\n'
         "}\n"
         "translations는 위 해외 뉴스 번호 전부를 포함하라. 태그는 # 없이 짧게(게임명, 행사명, 키워드). "
         "데이터가 부족한 지역은 summary를 \"데이터 부족\"으로 써라. "
-        "watchlist는 오늘 데이터에 실제 근거가 있는 키워드만 포함하고 없으면 빈 배열로 둬라. 추측 금지."
+        "watchlist는 오늘 데이터에 실제 근거가 있는 키워드만 포함하고 없으면 빈 배열로 둬라. 추측 금지. "
+        "highlights는 3~5개. translations는 '번역 필요한 뉴스 번호' 전부 포함. "
+        "중요: 조언·제안 표현(~해야 함, ~고려하라, ~필요함)은 전면 금지다. 관찰된 사실과 근거, 맥락만 써라. "
+        "히스토리와 비교해 여러 날 지속되는 트렌드인지 오늘 새로 등장한 것인지 구분해서 언급하라."
     )
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -334,7 +352,7 @@ def generate_insights(data):
                     n_tr += 1
                 except (ValueError, IndexError):
                     pass
-            print("[insight] " + model + " - 하이라이트 " + str(len(data["insights"]["highlights"])) + "개, 번역 " + str(n_tr) + "개")
+            print("[insight] " + model + " - 하이라이트 " + str(len(data["insights"].get("highlights", []))) + "개, 번역 " + str(n_tr) + "개")
             return
         except Exception as e:
             last_err = str(e)
@@ -353,6 +371,25 @@ def main():
         "bilibili": collect_bilibili(),
         "news": collect_news(),
     }
+    # 히스토리 갱신 (최근 7일 유지)
+    try:
+        hp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "history.json")
+        hist = []
+        try:
+            hist = json.load(open(hp, encoding="utf-8"))
+        except Exception:
+            pass
+        today = data["generated_at"][:10]
+        entry = {"date": today, "regions": {}}
+        for code, r in data["youtube"].items():
+            entry["regions"][code] = [v["title"] for v in r["videos"][:5]]
+        if data["bilibili"]:
+            entry["regions"]["CN"] = [v["title"] for v in data["bilibili"][:5]]
+        hist = [h for h in hist if h.get("date") != today] + [entry]
+        json.dump(hist[-7:], open(hp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("[history] " + str(len(hist[-7:])) + "일치 보관")
+    except Exception as e:
+        print("[history] 스킵: " + str(e))
     generate_insights(data)
     # 워치리스트 키워드가 제목에 실제 포함된 뉴스/영상 (링크용)
     try:
