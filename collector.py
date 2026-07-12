@@ -238,7 +238,25 @@ def generate_insights(data):
         "generationConfig": {"temperature": 0.4, "response_mime_type": "application/json"},
     }
     from urllib.error import HTTPError
-    for model in ("gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"):
+    # 사용 가능한 모델을 API에서 직접 조회해 최신 flash 모델 자동 선택
+    candidates = []
+    try:
+        ml = json.loads(http_get(
+            "https://generativelanguage.googleapis.com/v1beta/models?key=" + GEMINI_API_KEY,
+            timeout=30))
+        flashes = [m["name"].split("/")[-1] for m in ml.get("models", [])
+                   if "generateContent" in m.get("supportedGenerationMethods", [])
+                   and "flash" in m["name"]
+                   and not any(x in m["name"] for x in ("image", "tts", "live", "audio", "preview", "exp"))]
+        flashes.sort(reverse=True)  # 버전 높은 순
+        lite = [m for m in flashes if "lite" in m]
+        full = [m for m in flashes if "lite" not in m]
+        candidates = lite[:2] + full[:2]  # lite 우선(무료 한도가 더 넉넉)
+        print("[insight] 사용 가능 flash 모델: " + ", ".join(flashes[:8]))
+    except Exception as e:
+        print("[insight] 모델 목록 조회 실패: " + str(e))
+    candidates += ["gemini-flash-latest", "gemini-flash-lite-latest"]  # 폴백
+    for model in dict.fromkeys(candidates):
         try:
             url = ("https://generativelanguage.googleapis.com/v1beta/models/"
                    + model + ":generateContent?key=" + GEMINI_API_KEY)
