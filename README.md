@@ -64,3 +64,15 @@
 - 트렌드 탭이 비어 있음 → Secrets에 `YOUTUBE_API_KEY` 등록됐는지, Actions 로그에서 `[youtube]` 줄 확인
 - Bilibili가 비어 있음 → Bilibili가 가끔 봇 요청을 차단함. 다음 수집 때 자동 재시도되므로 대부분 하루 안에 복구
 - 특정 뉴스 매체 누락 → 해당 매체 RSS가 일시 장애일 수 있음. Actions 로그의 `[news]` 줄에서 원인 확인
+
+## (추가) Gemini 무료 API로 인사이트/한글요약 켜기
+
+1. https://aistudio.google.com 접속 → Google 계정 로그인
+2. 좌측 상단 **Get API key** → **Create API key** → 키 복사 (무료, 카드 불필요)
+3. GitHub 저장소 → **Settings → Secrets and variables → Actions → New repository secret**
+   - Name: `GEMINI_API_KEY` / Secret: 복사한 키 → Add secret
+4. Actions에서 "데이터 수집" 다시 실행하면:
+   - 트렌드 탭 상단에 💡 **오늘의 인사이트** 카드 (핵심 3~5줄 + 지역별 트렌드 비교)
+   - 뉴스 탭의 해외 기사 아래에 🇰🇷 한글 한줄 요약
+
+키를 등록하지 않으면 이 기능만 빠지고 나머지는 그대로 동작합니다.

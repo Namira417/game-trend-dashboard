@@ -4,8 +4,8 @@
 - YouTube 인기 게임 영상 (한국/미국/캐나다/일본)
 - Bilibili 게임 구역 랭킹 (중국)
 - 국내외 게임 뉴스 RSS
+- Gemini API로 인사이트/한글요약 생성 (키 있을 때만)
 결과를 data.json 으로 저장. 소스 하나가 실패해도 나머지는 계속 수집.
-사용법: YOUTUBE_API_KEY 환경변수 설정 후  python collector.py
 """
 import json
 import os
@@ -19,29 +19,25 @@ from urllib.parse import urlencode
 from xml.etree import ElementTree as ET
 
 YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY", "")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")  # 없으면 요약 생략
 
-# 수집 대상 YouTube 지역 (ISO 3166-1 alpha-2)
 YT_REGIONS = {
     "KR": "한국",
     "US": "미국",
     "CA": "캐나다",
     "JP": "일본",
 }
-YT_MAX_RESULTS = 20  # 지역당 영상 수
+YT_MAX_RESULTS = 20
 
-# 뉴스 RSS 피드 (실패해도 건너뜀)
 NEWS_FEEDS = [
-    # 국내
     {"source": "디스이즈게임", "lang": "ko", "url": "https://www.thisisgame.com/rss/rss.xml"},
     {"source": "게임메카", "lang": "ko", "url": "https://www.gamemeca.com/rss.php"},
     {"source": "인벤", "lang": "ko", "url": "https://www.inven.co.kr/rss/webzine/news/"},
-    # 해외
     {"source": "IGN", "lang": "en", "url": "https://feeds.feedburner.com/ign/games-all"},
     {"source": "GameSpot", "lang": "en", "url": "https://www.gamespot.com/feeds/game-news/"},
     {"source": "Eurogamer", "lang": "en", "url": "https://www.eurogamer.net/feed"},
     {"source": "GamesIndustry.biz", "lang": "en", "url": "https://www.gamesindustry.biz/feed"},
     {"source": "PC Gamer", "lang": "en", "url": "https://www.pcgamer.com/rss/"},
-    # 일본
     {"source": "4Gamer", "lang": "ja", "url": "https://www.4gamer.net/rss/index.xml"},
 ]
 NEWS_PER_FEED = 15
@@ -56,8 +52,15 @@ def http_get(url, headers=None, timeout=15):
         return r.read()
 
 
+def http_post_json(url, payload, timeout=60):
+    req = Request(url, data=json.dumps(payload).encode("utf-8"),
+                  headers={"Content-Type": "application/json",
+                           "User-Agent": "GameTrendDashboard/1.0"})
+    with urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read())
+
+
 def collect_youtube():
-    """지역별 게임 카테고리(20) 인기 영상"""
     if not YOUTUBE_API_KEY:
         print("[youtube] YOUTUBE_API_KEY 없음 - 건너뜀")
         return {}
@@ -73,7 +76,7 @@ def collect_youtube():
                 "key": YOUTUBE_API_KEY,
             })
             data = json.loads(http_get(
-                f"https://www.googleapis.com/youtube/v3/videos?{params}"))
+                "https://www.googleapis.com/youtube/v3/videos?" + params))
             videos = []
             for item in data.get("items", []):
                 sn = item.get("snippet", {})
@@ -87,33 +90,30 @@ def collect_youtube():
                     "publishedAt": sn.get("publishedAt", ""),
                     "views": int(st.get("viewCount", 0)),
                     "thumbnail": thumb,
-                    "url": f"https://www.youtube.com/watch?v={item.get('id','')}",
+                    "url": "https://www.youtube.com/watch?v=" + item.get("id", ""),
                 })
             out[code] = {"name": name, "videos": videos}
-            print(f"[youtube] {code} {len(videos)}개")
+            print("[youtube] " + code + " " + str(len(videos)) + "개")
         except Exception as e:
-            print(f"[youtube] {code} 실패: {e}")
+            print("[youtube] " + code + " 실패: " + str(e))
         time.sleep(0.3)
     return out
 
 
 def collect_bilibili():
-    """Bilibili 게임 구역 인기 랭킹 (중국 트렌드 대용)"""
     headers = {
         "Referer": "https://www.bilibili.com/",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36",
     }
     endpoints = [
-        # 게임 구역(rid=4) 랭킹
         "https://api.bilibili.com/x/web-interface/ranking/v2?rid=4&type=all",
-        # 폴백: 전체 인기
         "https://api.bilibili.com/x/web-interface/popular?ps=50",
     ]
     for url in endpoints:
         try:
             data = json.loads(http_get(url, headers=headers))
             if data.get("code") != 0:
-                print(f"[bilibili] 응답 코드 {data.get('code')} - 다음 엔드포인트 시도")
+                print("[bilibili] 응답 코드 " + str(data.get("code")) + " - 다음 엔드포인트 시도")
                 continue
             items = data.get("data", {}).get("list", [])[:20]
             videos = []
@@ -125,13 +125,13 @@ def collect_bilibili():
                     "channel": (v.get("owner") or {}).get("name", ""),
                     "views": int(stat.get("view", 0)),
                     "thumbnail": (v.get("pic") or "").replace("http://", "https://"),
-                    "url": f"https://www.bilibili.com/video/{v.get('bvid','')}",
+                    "url": "https://www.bilibili.com/video/" + v.get("bvid", ""),
                 })
             if videos:
-                print(f"[bilibili] {len(videos)}개")
+                print("[bilibili] " + str(len(videos)) + "개")
                 return videos
         except Exception as e:
-            print(f"[bilibili] 실패: {e}")
+            print("[bilibili] 실패: " + str(e))
     return []
 
 
@@ -145,7 +145,6 @@ def _text(el, *tags):
 
 
 def _parse_date(s):
-    """RFC822 / ISO8601 파싱해서 ISO 문자열 반환"""
     from email.utils import parsedate_to_datetime
     if not s:
         return ""
@@ -165,13 +164,12 @@ def collect_news():
         try:
             raw = http_get(feed["url"])
             root = ET.fromstring(raw)
-            # RSS <item> 또는 Atom <entry>
             entries = [e for e in root.iter() if e.tag.split('}')[-1] in ("item", "entry")]
             count = 0
             for e in entries[:NEWS_PER_FEED]:
                 title = _text(e, "title")
                 link = _text(e, "link")
-                if not link:  # Atom: <link href="...">
+                if not link:
                     for child in e.iter():
                         if child.tag.split('}')[-1] == "link" and child.get("href"):
                             link = child.get("href")
@@ -186,12 +184,84 @@ def collect_news():
                         "publishedAt": date,
                     })
                     count += 1
-            print(f"[news] {feed['source']} {count}개")
+            print("[news] " + feed["source"] + " " + str(count) + "개")
         except Exception as e:
-            print(f"[news] {feed['source']} 실패: {e}")
+            print("[news] " + feed["source"] + " 실패: " + str(e))
         time.sleep(0.2)
     articles.sort(key=lambda a: a.get("publishedAt") or "", reverse=True)
     return articles
+
+
+def generate_insights(data):
+    """Gemini 무료 API로 인사이트/한글요약 생성. 키 없거나 실패 시 조용히 생략."""
+    if not GEMINI_API_KEY:
+        print("[insight] GEMINI_API_KEY 없음 - 건너뜀")
+        return
+    blocks = []
+    for code, r in data.get("youtube", {}).items():
+        titles = [v["title"] for v in r.get("videos", [])[:12]]
+        if titles:
+            blocks.append("### " + r["name"] + "(" + code + ") YouTube 인기 영상\n" + "\n".join(titles))
+    if data.get("bilibili"):
+        blocks.append("### 중국(CN) Bilibili 인기 영상\n" +
+                      "\n".join(v["title"] for v in data["bilibili"][:12]))
+    ko_titles = [a["title"] for a in data.get("news", []) if a["lang"] == "ko"][:25]
+    if ko_titles:
+        blocks.append("### 한국 게임 뉴스 제목\n" + "\n".join(ko_titles))
+    foreign = [(i, a) for i, a in enumerate(data.get("news", [])) if a["lang"] != "ko"][:40]
+    if foreign:
+        blocks.append("### 해외 게임 뉴스 제목 (번호: 제목)\n" +
+                      "\n".join(str(i) + ": (" + a["source"] + ") " + a["title"] for i, a in foreign))
+    if not blocks:
+        print("[insight] 요약할 데이터 없음 - 건너뜀")
+        return
+
+    prompt = (
+        "너는 게임 업계 애널리스트다. 아래는 오늘 수집된 지역별 YouTube/Bilibili 인기 게임 영상 제목과 게임 뉴스 제목이다.\n\n"
+        + "\n\n".join(blocks) +
+        "\n\n다음 JSON 형식으로만 답하라(코드블록 없이):\n"
+        "{\n"
+        ' "highlights": ["오늘 게임 업계에서 주목할 핵심 포인트 3~5개, 각 한 문장, 한국어"],\n'
+        ' "regional": {\n'
+        '  "KR": "한국에서 지금 뜨는 게임/화제 한두 문장",\n'
+        '  "NA": "북미(미국·캐나다)에서 뜨는 게임/화제 한두 문장",\n'
+        '  "JP": "일본에서 뜨는 게임/화제 한두 문장",\n'
+        '  "CN": "중국(Bilibili)에서 뜨는 게임/화제 한두 문장",\n'
+        '  "common": "여러 지역에서 공통적으로 뜨는 게임이나 트렌드 한두 문장"\n'
+        " },\n"
+        ' "translations": {"뉴스번호": "해당 해외 기사 제목의 자연스러운 한국어 한줄 요약"}\n'
+        "}\n"
+        "translations는 위 해외 뉴스 번호 전부를 포함하라. 데이터가 부족한 지역은 \"데이터 부족\"이라고 써라."
+    )
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.4, "response_mime_type": "application/json"},
+    }
+    for model in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"):
+        try:
+            resp = http_post_json(
+                "https://generativelanguage.googleapis.com/v1beta/models/" + model
+                + ":generateContent?key=" + GEMINI_API_KEY, payload)
+            text = resp["candidates"][0]["content"]["parts"][0]["text"]
+            text = re.sub(r"^```(json)?|```$", "", text.strip(), flags=re.M).strip()
+            result = json.loads(text)
+            data["insights"] = {
+                "highlights": result.get("highlights", []),
+                "regional": result.get("regional", {}),
+                "model": model,
+            }
+            n_tr = 0
+            for idx, ko in (result.get("translations") or {}).items():
+                try:
+                    data["news"][int(idx)]["title_ko"] = ko
+                    n_tr += 1
+                except (ValueError, IndexError):
+                    pass
+            print("[insight] " + model + " - 하이라이트 " + str(len(data["insights"]["highlights"])) + "개, 번역 " + str(n_tr) + "개")
+            return
+        except Exception as e:
+            print("[insight] " + model + " 실패: " + str(e))
+    print("[insight] 모든 모델 실패 - 요약 없이 진행")
 
 
 def main():
@@ -201,12 +271,12 @@ def main():
         "bilibili": collect_bilibili(),
         "news": collect_news(),
     }
+    generate_insights(data)
     out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
     n_yt = sum(len(v["videos"]) for v in data["youtube"].values())
-    print(f"완료: YouTube {n_yt}개 / Bilibili {len(data['bilibili'])}개 / 뉴스 {len(data['news'])}개 -> data.json")
-    # 전부 비어있으면 실패 처리 (Actions 알림용)
+    print("완료: YouTube " + str(n_yt) + "개 / Bilibili " + str(len(data["bilibili"])) + "개 / 뉴스 " + str(len(data["news"])) + "개 -> data.json")
     if not (n_yt or data["bilibili"] or data["news"]):
         sys.exit(1)
 

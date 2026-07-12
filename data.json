@@ -77,7 +77,22 @@
    "lang": "en",
    "title": "[Sample] Major Game Industry News",
    "url": "https://www.ign.com",
-   "publishedAt": "2026-07-11T19:46:16.700938+00:00"
+   "publishedAt": "2026-07-11T19:46:16.700938+00:00",
+   "title_ko": "[샘플] 해외 기사 한글 요약이 여기에 표시됩니다."
   }
- ]
+ ],
+ "insights": {
+  "highlights": [
+   "[샘플] 오늘의 핵심 인사이트가 여기에 3~5줄로 표시됩니다.",
+   "[샘플] GEMINI_API_KEY 등록 후 실제 분석으로 교체됩니다."
+  ],
+  "regional": {
+   "KR": "[샘플] 한국 트렌드 요약",
+   "NA": "[샘플] 북미 트렌드 요약",
+   "JP": "[샘플] 일본 트렌드 요약",
+   "CN": "[샘플] 중국 트렌드 요약",
+   "common": "[샘플] 공통 트렌드"
+  },
+  "model": "sample"
+ }
 }

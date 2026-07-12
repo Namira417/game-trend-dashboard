@@ -21,6 +21,7 @@ jobs:
       - name: 데이터 수집
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python collector.py
 
       - name: 커밋 & 푸시
