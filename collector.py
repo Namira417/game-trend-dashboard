@@ -222,6 +222,19 @@ def generate_insights(data):
         print("[insight] 요약할 데이터 없음 - 건너뜀")
         return
 
+    # 워치리스트 (있으면 프롬프트에 포함)
+    watch = {"context": "", "keywords": []}
+    try:
+        wp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "watchlist.json")
+        w = json.load(open(wp, encoding="utf-8"))
+        watch["context"] = w.get("context", "")
+        watch["keywords"] = [k for k in w.get("keywords", []) if k]
+    except Exception:
+        pass
+    if watch["keywords"]:
+        blocks.append("### 사용자 정보\n직군/관심: " + watch["context"] +
+                      "\n워치리스트 키워드: " + ", ".join(watch["keywords"]))
+
     # prompt.txt가 있으면 분석 지침으로 사용 (자유롭게 편집 가능)
     intro = "너는 게임 업계 애널리스트다. 아래는 오늘 수집된 지역별 YouTube/Bilibili 인기 게임 영상 제목과 게임 뉴스 제목이다."
     try:
@@ -250,10 +263,13 @@ def generate_insights(data):
         '  "JP": {"summary": ["일본 게임 뉴스 핵심 1~3개, 각 한 문장, 한국어"], "tags": ["..."]},\n'
         '  "CN": {"summary": ["중국 게임 뉴스 핵심 1~3개, 각 한 문장, 한국어"], "tags": ["..."]}\n'
         " },\n"
+        ' "for_me": ["위 사용자 정보 관점에서 오늘 데이터가 주는 실질적 시사점 2~3개, 각 한 문장"],\n'
+        ' "watchlist": [{"keyword": "워치리스트 키워드", "note": "오늘 데이터에 근거한 관련 동향 1~2문장"}],\n'
         ' "translations": {"뉴스번호": "해당 해외 기사 제목의 자연스러운 한국어 한줄 요약"}\n'
         "}\n"
         "translations는 위 해외 뉴스 번호 전부를 포함하라. 태그는 # 없이 짧게(게임명, 행사명, 키워드). "
-        "데이터가 부족한 지역은 summary를 \"데이터 부족\"으로 써라."
+        "데이터가 부족한 지역은 summary를 \"데이터 부족\"으로 써라. "
+        "watchlist는 오늘 데이터에 실제 근거가 있는 키워드만 포함하고 없으면 빈 배열로 둬라. 추측 금지."
     )
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -307,6 +323,8 @@ def generate_insights(data):
                 "highlights": result.get("highlights", []),
                 "regional": result.get("regional", {}),
                 "news_brief": result.get("news_brief", {}),
+                "for_me": result.get("for_me", []),
+                "watchlist": result.get("watchlist", []),
                 "model": model,
             }
             n_tr = 0
@@ -336,6 +354,31 @@ def main():
         "news": collect_news(),
     }
     generate_insights(data)
+    # 워치리스트 키워드가 제목에 실제 포함된 뉴스/영상 (링크용)
+    try:
+        wp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "watchlist.json")
+        kws = [k for k in json.load(open(wp, encoding="utf-8")).get("keywords", []) if k]
+        hits = []
+        for a in data["news"]:
+            t = a["title"].lower()
+            for k in kws:
+                if k.lower() in t:
+                    hits.append({"keyword": k, "type": "news", "title": a["title"],
+                                 "url": a["url"], "source": a["source"]})
+                    break
+        for code, r in data["youtube"].items():
+            for v in r["videos"]:
+                t = v["title"].lower()
+                for k in kws:
+                    if k.lower() in t:
+                        hits.append({"keyword": k, "type": "video", "title": v["title"],
+                                     "url": v["url"], "source": r["name"] + " YouTube"})
+                        break
+        data["watchlist_hits"] = hits[:30]
+        print("[watchlist] 매칭 " + str(len(hits)) + "건")
+    except Exception as e:
+        print("[watchlist] 스킵: " + str(e))
+        data["watchlist_hits"] = []
     data["warnings"] = WARNINGS
     if WARNINGS:
         print("경고: " + " / ".join(WARNINGS))

@@ -61,6 +61,16 @@ h1{font-size:1.35rem}
 .nb-region{margin-bottom:10px}
 .nb-region:last-child{margin-bottom:0}
 .nb-region b{display:block;font-size:.8rem;color:var(--accent2);margin-bottom:4px}
+.watch{border-color:var(--accent2)}
+.watch h2{color:var(--accent2)}
+.wl-kw{margin-bottom:10px}
+.wl-kw b{display:block;font-size:.85rem;color:var(--accent2);margin-bottom:3px}
+.wl-kw p{font-size:.87rem;line-height:1.5}
+.wl-hit{display:block;font-size:.82rem;color:var(--accent);text-decoration:none;padding:2px 0;line-height:1.4}
+.wl-hit:hover{text-decoration:underline}
+.wl-hit small{color:var(--sub)}
+.forme{margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.forme b{display:block;font-size:.85rem;color:var(--green);margin-bottom:4px}
 .warnbar{background:#3a2e12;border:1px solid #fbbf24;color:#fde68a;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.85rem;line-height:1.5}
 .cal-head{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:10px}
 .cal-head b{font-size:1rem}
@@ -96,6 +106,7 @@ section{display:none}section.on{display:block}
 
   <section id="trend" class="on">
     <div id="insight-box"></div>
+    <div id="watch-box"></div>
     <div class="chips" id="region-chips"></div>
     <div class="vgrid" id="videos"></div>
   </section>
@@ -149,7 +160,26 @@ function renderInsights(){
       <h2>💡 오늘의 인사이트</h2>
       ${hl ? `<ul>${hl}</ul>` : ''}
       ${rg ? `<div class="rgrid">${rg}</div>` : ''}
+      ${(ins.for_me||[]).length ? `<div class="forme"><b>🧭 기획자 관점 시사점</b><ul>${
+        ins.for_me.map(h=>`<li>${esc(h)}</li>`).join('')}</ul></div>` : ''}
     </div>`;
+}
+
+function renderWatchlist(){
+  const notes = (DATA.insights||{}).watchlist || [];
+  const hits = DATA.watchlist_hits || [];
+  if (!notes.length && !hits.length) return;
+  const byKw = {};
+  hits.forEach(h => { (byKw[h.keyword] = byKw[h.keyword] || []).push(h); });
+  const kws = [...new Set([...notes.map(n=>n.keyword), ...Object.keys(byKw)])];
+  const body = kws.map(k => {
+    const note = notes.find(n => n.keyword === k);
+    const links = (byKw[k]||[]).slice(0,4).map(h =>
+      `<a class="wl-hit" href="${esc(h.url)}" target="_blank" rel="noopener">${h.type==='video'?'▶':'📄'} ${esc(h.title)} <small>· ${esc(h.source)}</small></a>`).join('');
+    return `<div class="wl-kw"><b>${esc(k)}</b>${note?`<p>${esc(note.note)}</p>`:''}${links}</div>`;
+  }).join('');
+  document.getElementById('watch-box').innerHTML =
+    `<div class="insight watch"><h2>🎯 내 워치리스트</h2>${body}</div>`;
 }
 
 function renderRegions(){
@@ -301,6 +331,7 @@ async function init(){
       document.getElementById('warn-box').innerHTML =
         `<div class="warnbar">⚠️ ${d.warnings.map(esc).join('<br>⚠️ ')}</div>`;
     renderInsights();
+    renderWatchlist();
     renderNewsBrief();
     renderRegions();
     renderNewsChips();
