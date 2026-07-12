@@ -57,6 +57,10 @@ h1{font-size:1.35rem}
 .rbox{background:rgba(0,0,0,.25);border-radius:10px;padding:10px 12px}
 .rbox b{display:block;font-size:.78rem;color:var(--accent2);margin-bottom:4px}
 .rbox span{font-size:.83rem;line-height:1.5;color:var(--text)}
+.tag{display:inline-block;background:rgba(108,140,255,.14);color:var(--accent);border:1px solid rgba(108,140,255,.3);border-radius:6px;padding:1px 8px;margin:6px 4px 0 0;font-size:.74rem}
+.nb-region{margin-bottom:10px}
+.nb-region:last-child{margin-bottom:0}
+.nb-region b{display:block;font-size:.8rem;color:var(--accent2);margin-bottom:4px}
 .warnbar{background:#3a2e12;border:1px solid #fbbf24;color:#fde68a;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.85rem;line-height:1.5}
 .cal-head{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:10px}
 .cal-head b{font-size:1rem}
@@ -133,8 +137,13 @@ function renderInsights(){
   if (!ins || (!(ins.highlights||[]).length && !Object.keys(ins.regional||{}).length)) return;
   const hl = (ins.highlights||[]).map(h => `<li>${esc(h)}</li>`).join('');
   const rg = Object.entries(ins.regional||{})
-    .filter(([,v]) => v && v !== '데이터 부족')
-    .map(([k,v]) => `<div class="rbox"><b>${REGION_LABEL[k]||esc(k)}</b><span>${esc(v)}</span></div>`).join('');
+    .map(([k,v]) => {
+      const sum = typeof v === 'string' ? v : (v?.summary || '');
+      const tags = (typeof v === 'object' && v?.tags) || [];
+      if (!sum || sum === '데이터 부족') return '';
+      return `<div class="rbox"><b>${REGION_LABEL[k]||esc(k)}</b><span>${esc(sum)}</span>${
+        tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`;
+    }).join('');
   document.getElementById('insight-box').innerHTML = `
     <div class="insight">
       <h2>💡 오늘의 인사이트</h2>
@@ -205,11 +214,26 @@ function renderNews(){
     </a>`).join('');
 }
 
+const NB_LABEL = {KR:'🇰🇷 국내', NA:'🌎 북미/서구권', JP:'🇯🇵 일본', CN:'🇨🇳 중국'};
 function renderNewsBrief(){
-  const nb = (DATA.insights||{}).news_brief || [];
-  if (!nb.length) return;
+  const nb = (DATA.insights||{}).news_brief;
+  if (!nb) return;
+  let body = '';
+  if (Array.isArray(nb)) {  // 구버전 데이터 호환
+    if (!nb.length) return;
+    body = `<ul>${nb.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>`;
+  } else {
+    body = Object.entries(nb).map(([k,v]) => {
+      const sums = (v?.summary || []).filter(x => x && x !== '데이터 부족');
+      if (!sums.length) return '';
+      return `<div class="nb-region"><b>${NB_LABEL[k]||esc(k)}</b><ul>${
+        sums.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>${
+        (v?.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`;
+    }).join('');
+  }
+  if (!body) return;
   document.getElementById('news-insight').innerHTML =
-    `<div class="insight"><h2>📰 오늘의 뉴스 브리핑</h2><ul>${nb.map(h=>`<li>${esc(h)}</li>`).join('')}</ul></div>`;
+    `<div class="insight"><h2>📰 오늘의 뉴스 브리핑</h2>${body}</div>`;
 }
 
 const EV_COLORS = ['#6c8cff','#ff6c8c','#4ade80','#fbbf24','#a78bfa','#34d399','#f87171','#38bdf8'];

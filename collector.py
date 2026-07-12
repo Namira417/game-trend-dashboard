@@ -41,6 +41,8 @@ NEWS_FEEDS = [
     {"source": "GamesIndustry.biz", "lang": "en", "url": "https://www.gamesindustry.biz/feed"},
     {"source": "PC Gamer", "lang": "en", "url": "https://www.pcgamer.com/rss/"},
     {"source": "4Gamer", "lang": "ja", "url": "https://www.4gamer.net/rss/index.xml"},
+    # 중국
+    {"source": "GameLook", "lang": "zh", "url": "http://www.gamelook.com.cn/feed"},
 ]
 NEWS_PER_FEED = 15
 
@@ -220,23 +222,38 @@ def generate_insights(data):
         print("[insight] 요약할 데이터 없음 - 건너뜀")
         return
 
+    # prompt.txt가 있으면 분석 지침으로 사용 (자유롭게 편집 가능)
+    intro = "너는 게임 업계 애널리스트다. 아래는 오늘 수집된 지역별 YouTube/Bilibili 인기 게임 영상 제목과 게임 뉴스 제목이다."
+    try:
+        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "prompt.txt")
+        custom = open(p, encoding="utf-8").read().strip()
+        if custom:
+            intro = custom
+    except Exception:
+        pass
     prompt = (
-        "너는 게임 업계 애널리스트다. 아래는 오늘 수집된 지역별 YouTube/Bilibili 인기 게임 영상 제목과 게임 뉴스 제목이다.\n\n"
+        intro + "\n\n"
         + "\n\n".join(blocks) +
         "\n\n다음 JSON 형식으로만 답하라(코드블록 없이):\n"
         "{\n"
         ' "highlights": ["오늘 게임 업계에서 주목할 핵심 포인트 3~5개, 각 한 문장, 한국어"],\n'
         ' "regional": {\n'
-        '  "KR": "한국에서 지금 뜨는 게임/화제 한두 문장",\n'
-        '  "NA": "북미(미국·캐나다)에서 뜨는 게임/화제 한두 문장",\n'
-        '  "JP": "일본에서 뜨는 게임/화제 한두 문장",\n'
-        '  "CN": "중국(Bilibili)에서 뜨는 게임/화제 한두 문장",\n'
-        '  "common": "여러 지역에서 공통적으로 뜨는 게임이나 트렌드 한두 문장"\n'
+        '  "KR": {"summary": "한국에서 지금 뜨는 게임/화제 한두 문장", "tags": ["핵심 게임명/키워드 태그 2~5개"]},\n'
+        '  "NA": {"summary": "북미(미국·캐나다)에서 뜨는 게임/화제 한두 문장", "tags": ["..."]},\n'
+        '  "JP": {"summary": "일본에서 뜨는 게임/화제 한두 문장", "tags": ["..."]},\n'
+        '  "CN": {"summary": "중국(Bilibili)에서 뜨는 게임/화제 한두 문장", "tags": ["..."]},\n'
+        '  "common": {"summary": "여러 지역 공통 트렌드 한두 문장", "tags": ["..."]}\n'
         " },\n"
-        ' "news_brief": ["오늘 게임 뉴스 전반에서 중요한 흐름/사건 2~4개, 각 한 문장, 한국어"],\n'
+        ' "news_brief": {\n'
+        '  "KR": {"summary": ["국내 게임 뉴스 핵심 1~3개, 각 한 문장"], "tags": ["핵심 태그 2~5개"]},\n'
+        '  "NA": {"summary": ["북미/서구권 게임 뉴스 핵심 1~3개, 각 한 문장, 한국어"], "tags": ["..."]},\n'
+        '  "JP": {"summary": ["일본 게임 뉴스 핵심 1~3개, 각 한 문장, 한국어"], "tags": ["..."]},\n'
+        '  "CN": {"summary": ["중국 게임 뉴스 핵심 1~3개, 각 한 문장, 한국어"], "tags": ["..."]}\n'
+        " },\n"
         ' "translations": {"뉴스번호": "해당 해외 기사 제목의 자연스러운 한국어 한줄 요약"}\n'
         "}\n"
-        "translations는 위 해외 뉴스 번호 전부를 포함하라. 데이터가 부족한 지역은 \"데이터 부족\"이라고 써라."
+        "translations는 위 해외 뉴스 번호 전부를 포함하라. 태그는 # 없이 짧게(게임명, 행사명, 키워드). "
+        "데이터가 부족한 지역은 summary를 \"데이터 부족\"으로 써라."
     )
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -289,7 +306,7 @@ def generate_insights(data):
             data["insights"] = {
                 "highlights": result.get("highlights", []),
                 "regional": result.get("regional", {}),
-                "news_brief": result.get("news_brief", []),
+                "news_brief": result.get("news_brief", {}),
                 "model": model,
             }
             n_tr = 0
