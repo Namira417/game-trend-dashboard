@@ -57,6 +57,7 @@ h1{font-size:1.35rem}
 .rbox{background:rgba(0,0,0,.25);border-radius:10px;padding:10px 12px}
 .rbox b{display:block;font-size:.78rem;color:var(--accent2);margin-bottom:4px}
 .rbox span{font-size:.83rem;line-height:1.5;color:var(--text)}
+.tags{display:block;margin-top:2px}
 .tag{display:inline-block;background:rgba(108,140,255,.14);color:var(--accent);border:1px solid rgba(108,140,255,.3);border-radius:6px;padding:1px 8px;margin:6px 4px 0 0;font-size:.74rem}
 .nb-region{margin-bottom:10px}
 .nb-region:last-child{margin-bottom:0}
@@ -153,7 +154,7 @@ function renderInsights(){
       const tags = (typeof v === 'object' && v?.tags) || [];
       if (!sum || sum === '데이터 부족') return '';
       return `<div class="rbox"><b>${REGION_LABEL[k]||esc(k)}</b><span>${esc(sum)}</span>${
-        tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`;
+        tags.length?`<div class="tags">${tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}</div>`;
     }).join('');
   document.getElementById('insight-box').innerHTML = `
     <div class="insight">
@@ -256,9 +257,10 @@ function renderNewsBrief(){
     body = Object.entries(nb).map(([k,v]) => {
       const sums = (v?.summary || []).filter(x => x && x !== '데이터 부족');
       if (!sums.length) return '';
+      const tg = v?.tags||[];
       return `<div class="nb-region"><b>${NB_LABEL[k]||esc(k)}</b><ul>${
         sums.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>${
-        (v?.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`;
+        tg.length?`<div class="tags">${tg.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}</div>`;
     }).join('');
   }
   if (!body) return;
