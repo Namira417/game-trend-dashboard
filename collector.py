@@ -187,6 +187,8 @@ def collect_steam_top():
                 "name": name or ("App " + appid),
                 "current": cur,
                 "peak_today": int(g.get("peak_in_game", 0)),
+                "last_week_rank": int(g.get("last_week_rank", 0)) or None,
+                "weekly_rank_change": int(g.get("last_week_rank", 0)) - i if g.get("last_week_rank") else None,
                 "delta_current": delta,
                 "delta_percent": round(delta / old_cur * 100, 1) if old_cur else None,
                 "delta_rank": int(old_rank) - i if old_rank else None,

@@ -41,6 +41,15 @@ h1{font-size:1.35rem}
 .steam-table th{color:var(--sub);font-weight:600;background:var(--card2)}
 .steam-table a{color:var(--text);text-decoration:none}
 .steam-table a:hover{color:var(--accent)}
+.steam-discovery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.steam-panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px}
+.steam-panel h2{font-size:.92rem;margin-bottom:10px;color:var(--accent)}
+.bar-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(120px,2fr) auto;gap:8px;align-items:center;color:var(--text);text-decoration:none;margin:8px 0}
+.bar-name{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:8px;background:var(--card2);border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.bar-val{font-size:.78rem;color:var(--sub);min-width:48px;text-align:right}
+.signal{display:inline-block;margin-left:6px;color:var(--green);font-size:.72rem}
 .up{color:var(--green)}.down{color:#f87171}.flat{color:var(--sub)}
 .egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .ecard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
@@ -140,7 +149,7 @@ section{display:none}section.on{display:block}
 </div>
 
 <script>
-let DATA = null, EVENTS = [], curRegion = null, curSrc = 'all';
+let DATA = null, EVENTS = [], curRegion = null, curSrc = 'all', steamMode = 'rising';
 
 const fmt = n => n >= 100000000 ? (n/100000000).toFixed(1)+'억' : n >= 10000 ? (n/10000).toFixed(1)+'만' : n.toLocaleString();
 const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
@@ -241,6 +250,32 @@ function renderVideos(){
 }
 
 const signed = n => n == null ? '-' : (n > 0 ? '+' : '') + fmt(n);
+const norm = s => (s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
+function steamSignals(g){
+  const key = norm(g.name).slice(0,18);
+  if (key.length < 4) return [];
+  const texts = [
+    ...(DATA.news||[]).map(a => a.title + ' ' + (a.title_ko||'')),
+    ...Object.values(DATA.youtube||{}).flatMap(r => (r.videos||[]).map(v => v.title)),
+    ...(DATA.bilibili||[]).map(v => v.title),
+  ].map(norm);
+  const hits = texts.filter(t => t.includes(key)).length;
+  return hits ? [`뉴스/영상 ${hits}`] : [];
+}
+
+function barPanel(title, rows, valueFn, labelFn){
+  if (!rows.length) return '';
+  const max = Math.max(...rows.map(valueFn), 1);
+  return `<div class="steam-panel"><h2>${title}</h2>${rows.map(g => {
+    const signals = steamSignals(g);
+    return `<a class="bar-row" href="${esc(g.url)}" target="_blank" rel="noopener">
+      <span class="bar-name">${esc(g.name)}${signals.length?`<span class="signal">● ${esc(signals.join(', '))}</span>`:''}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:${Math.max(4, valueFn(g)/max*100)}%"></span></span>
+      <span class="bar-val">${labelFn(g)}</span>
+    </a>`;
+  }).join('')}</div>`;
+}
+
 function renderSteam(){
   const games = (DATA.steam||{}).games || [];
   const box = document.getElementById('steam-list');
@@ -248,20 +283,55 @@ function renderSteam(){
     box.innerHTML = '<div class="empty">아직 Steam Top 100 데이터가 없습니다.</div>';
     return;
   }
+  const rising = games.filter(g => (g.weekly_rank_change||0) > 0 || (g.delta_current||0) > 0)
+    .sort((a,b) =>
+      (b.weekly_rank_change||-999) - (a.weekly_rank_change||-999) ||
+      (b.delta_percent||-999) - (a.delta_percent||-999) ||
+      (b.delta_current||0) - (a.delta_current||0));
+  const list = steamMode === 'rising' ? rising : games;
+  const modeBtns = `<div class="chips">
+    <button class="chip${steamMode==='rising'?' on':''}" data-steam-mode="rising">급상승</button>
+    <button class="chip${steamMode==='top'?' on':''}" data-steam-mode="top">동접 Top 100</button>
+  </div>`;
+  if (!list.length){
+    box.innerHTML = modeBtns + '<div class="empty">아직 상승 데이터가 없습니다.<br>다음 수집부터 직전 대비 증감이 표시됩니다.</div>';
+    bindSteamMode();
+    return;
+  }
+  const weekly = games.filter(g => (g.weekly_rank_change||0) > 0).slice()
+    .sort((a,b) => (b.weekly_rank_change||0) - (a.weekly_rank_change||0)).slice(0,10);
+  const surging = games.filter(g => (g.delta_percent||0) > 0 && g.current > 1000).slice()
+    .sort((a,b) => (b.delta_percent||0) - (a.delta_percent||0)).slice(0,10);
+  const discovery = `<div class="steam-discovery">${
+    barPanel('주간 순위 상승', weekly, g => g.weekly_rank_change||0, g => '▲'+g.weekly_rank_change)
+  }${
+    barPanel('동접 증가율', surging, g => g.delta_percent||0, g => '+'+g.delta_percent+'%')
+  }</div>`;
   box.innerHTML = `<table class="steam-table">
-    <thead><tr><th>순위</th><th>게임</th><th>현재 동접</th><th>증감</th><th>순위</th><th>오늘 최고</th></tr></thead>
-    <tbody>${games.map(g => {
+    <thead><tr><th>순위</th><th>게임</th><th>현재 동접</th><th>동접 증감</th><th>주간</th><th>직전</th><th>오늘 최고</th></tr></thead>
+    <tbody>${list.map(g => {
       const cls = g.delta_current > 0 ? 'up' : g.delta_current < 0 ? 'down' : 'flat';
       const pct = g.delta_percent == null ? '' : ` (${g.delta_percent > 0 ? '+' : ''}${g.delta_percent}%)`;
+      const wk = g.weekly_rank_change == null ? '-' : g.weekly_rank_change === 0 ? '-' : (g.weekly_rank_change > 0 ? '▲' : '▼') + Math.abs(g.weekly_rank_change);
       return `<tr>
         <td>#${g.rank}</td>
         <td><a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.name)}</a></td>
         <td>${fmt(g.current)}</td>
         <td class="${cls}">${signed(g.delta_current)}${pct}</td>
+        <td class="${g.weekly_rank_change > 0 ? 'up' : g.weekly_rank_change < 0 ? 'down' : 'flat'}">${wk}</td>
         <td class="${g.delta_rank > 0 ? 'up' : g.delta_rank < 0 ? 'down' : 'flat'}">${g.delta_rank == null ? '-' : g.delta_rank === 0 ? '-' : (g.delta_rank > 0 ? '▲' : '▼') + Math.abs(g.delta_rank)}</td>
         <td>${fmt(g.peak_today)}</td>
       </tr>`;
     }).join('')}</tbody></table>`;
+  box.insertAdjacentHTML('afterbegin', modeBtns + discovery);
+  bindSteamMode();
+}
+
+function bindSteamMode(){
+  document.querySelectorAll('[data-steam-mode]').forEach(b => b.onclick = () => {
+    steamMode = b.dataset.steamMode;
+    renderSteam();
+  });
 }
 
 function renderNewsChips(){
