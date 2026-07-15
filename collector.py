@@ -172,8 +172,7 @@ def collect_steam_top():
             old_rank = old.get("rank")
             delta = cur - int(old_cur) if old_cur is not None else None
             name = g.get("name") or old.get("name")
-            description = old.get("description", "")
-            if not (name and description):
+            if not name:
                 try:
                     detail = json.loads(http_get(
                         "https://store.steampowered.com/api/appdetails?"
@@ -181,14 +180,14 @@ def collect_steam_top():
                         timeout=10)).get(appid, {})
                     info = detail.get("data", {})
                     name = name or info.get("name")
-                    description = description or html.unescape(re.sub(r"<[^>]+>", "", info.get("short_description", "")))
                 except Exception:
                     pass
+            is_new_top100 = appid not in prev
             games.append({
                 "rank": i,
                 "appid": appid,
                 "name": name or ("App " + appid),
-                "description": description,
+                "image": "https://cdn.akamai.steamstatic.com/steam/apps/" + appid + "/header.jpg",
                 "current": cur,
                 "peak_today": int(g.get("peak_in_game", 0)),
                 "last_week_rank": int(g.get("last_week_rank", 0)) or None,
@@ -196,6 +195,7 @@ def collect_steam_top():
                 "delta_current": delta,
                 "delta_percent": round(delta / old_cur * 100, 1) if old_cur else None,
                 "delta_rank": int(old_rank) - i if old_rank else None,
+                "is_new_top100": is_new_top100,
                 "url": "https://store.steampowered.com/app/" + appid,
             })
         print("[steam] " + str(len(games)) + "개")
@@ -446,7 +446,7 @@ def main():
             pass
         today = data["generated_at"][:10]
         entry = {"date": today, "games": [
-            {k: g[k] for k in ("rank", "appid", "name", "description", "current", "peak_today")}
+            {k: g[k] for k in ("rank", "appid", "name", "current", "peak_today")}
             for g in data["steam"].get("games", [])
         ]}
         if entry["games"]:
