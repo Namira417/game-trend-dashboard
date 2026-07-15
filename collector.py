@@ -2,6 +2,7 @@
 """
 게임 트렌드 대시보드 데이터 수집기
 - YouTube 인기 게임 영상 (한국/미국/캐나다/일본)
+- Steam 동접 Top 100
 - Bilibili 게임 구역 랭킹 (중국)
 - 국내외 게임 뉴스 RSS
 - Gemini API로 인사이트/한글요약 생성 (키 있을 때만)
@@ -45,6 +46,7 @@ NEWS_FEEDS = [
     {"source": "GameLook", "lang": "zh", "url": "http://www.gamelook.com.cn/feed"},
 ]
 NEWS_PER_FEED = 15
+STEAM_TOP_N = 100
 
 
 def http_get(url, headers=None, timeout=15):
@@ -139,6 +141,63 @@ def collect_bilibili():
         except Exception as e:
             print("[bilibili] 실패: " + str(e))
     return []
+
+
+def collect_steam_top():
+    try:
+        raw = json.loads(http_get(
+            "https://api.steampowered.com/ISteamChartsService/GetMostPlayedGames/v1/?format=json"))
+        ranks = raw.get("response", {}).get("ranks", [])[:STEAM_TOP_N]
+        prev = {}
+        hp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "steam_history.json")
+        try:
+            hist = json.load(open(hp, encoding="utf-8"))
+            for g in (hist[-1].get("games", []) if hist else []):
+                prev[str(g.get("appid"))] = g
+        except Exception:
+            pass
+
+        games = []
+        for i, g in enumerate(ranks, 1):
+            appid = str(g.get("appid", ""))
+            try:
+                cur = int(json.loads(http_get(
+                    "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?"
+                    + urlencode({"appid": appid}),
+                    timeout=10)).get("response", {}).get("player_count", 0))
+            except Exception:
+                cur = 0
+            old = prev.get(appid, {})
+            old_cur = old.get("current")
+            old_rank = old.get("rank")
+            delta = cur - int(old_cur) if old_cur is not None else None
+            name = g.get("name") or old.get("name")
+            if not name:
+                try:
+                    detail = json.loads(http_get(
+                        "https://store.steampowered.com/api/appdetails?"
+                        + urlencode({"appids": appid, "filters": "basic"}),
+                        timeout=10)).get(appid, {})
+                    name = detail.get("data", {}).get("name")
+                except Exception:
+                    pass
+            games.append({
+                "rank": i,
+                "appid": appid,
+                "name": name or ("App " + appid),
+                "current": cur,
+                "peak_today": int(g.get("peak_in_game", 0)),
+                "delta_current": delta,
+                "delta_percent": round(delta / old_cur * 100, 1) if old_cur else None,
+                "delta_rank": int(old_rank) - i if old_rank else None,
+                "url": "https://store.steampowered.com/app/" + appid,
+            })
+        print("[steam] " + str(len(games)) + "개")
+        return {"games": games}
+    except Exception as e:
+        print("[steam] 실패: " + str(e))
+        WARNINGS.append("Steam Top 100 수집 실패")
+        return {"games": []}
 
 
 def _text(el, *tags):
@@ -368,9 +427,28 @@ def main():
     data = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "youtube": collect_youtube(),
+        "steam": collect_steam_top(),
         "bilibili": collect_bilibili(),
         "news": collect_news(),
     }
+    try:
+        hp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "steam_history.json")
+        hist = []
+        try:
+            hist = json.load(open(hp, encoding="utf-8"))
+        except Exception:
+            pass
+        today = data["generated_at"][:10]
+        entry = {"date": today, "games": [
+            {k: g[k] for k in ("rank", "appid", "name", "current", "peak_today")}
+            for g in data["steam"].get("games", [])
+        ]}
+        if entry["games"]:
+            hist = [h for h in hist if h.get("date") != today] + [entry]
+            json.dump(hist[-7:], open(hp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+            print("[steam_history] " + str(len(hist[-7:])) + "일치 보관")
+    except Exception as e:
+        print("[steam_history] 스킵: " + str(e))
     # 히스토리 갱신 (최근 7일 유지)
     try:
         hp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "history.json")
@@ -423,8 +501,9 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
     n_yt = sum(len(v["videos"]) for v in data["youtube"].values())
-    print("완료: YouTube " + str(n_yt) + "개 / Bilibili " + str(len(data["bilibili"])) + "개 / 뉴스 " + str(len(data["news"])) + "개 -> data.json")
-    if not (n_yt or data["bilibili"] or data["news"]):
+    n_steam = len(data["steam"].get("games", []))
+    print("완료: YouTube " + str(n_yt) + "개 / Steam " + str(n_steam) + "개 / Bilibili " + str(len(data["bilibili"])) + "개 / 뉴스 " + str(len(data["news"])) + "개 -> data.json")
+    if not (n_yt or n_steam or data["bilibili"] or data["news"]):
         sys.exit(1)
 
 

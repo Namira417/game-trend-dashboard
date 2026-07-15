@@ -35,6 +35,13 @@ h1{font-size:1.35rem}
 .news-meta{color:var(--sub);font-size:.78rem;margin-top:4px}
 .news-src{color:var(--accent);font-weight:600}
 .news-ko{color:var(--accent);font-size:.85rem;margin-top:3px;line-height:1.4}
+.steam-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.steam-table th,.steam-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:.86rem;text-align:right}
+.steam-table th:first-child,.steam-table td:first-child,.steam-table th:nth-child(2),.steam-table td:nth-child(2){text-align:left}
+.steam-table th{color:var(--sub);font-weight:600;background:var(--card2)}
+.steam-table a{color:var(--text);text-decoration:none}
+.steam-table a:hover{color:var(--accent)}
+.up{color:var(--green)}.down{color:#f87171}.flat{color:var(--sub)}
 .egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .ecard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
 .ecard.live{border-color:var(--green)}
@@ -104,6 +111,7 @@ section{display:none}section.on{display:block}
 
   <div class="tabs">
     <button class="tab on" data-tab="trend">📈 트렌드</button>
+    <button class="tab" data-tab="steam">🎮 Steam</button>
     <button class="tab" data-tab="news">📰 뉴스</button>
     <button class="tab" data-tab="events">📅 행사</button>
   </div>
@@ -113,6 +121,10 @@ section{display:none}section.on{display:block}
     <div id="watch-box"></div>
     <div class="chips" id="region-chips"></div>
     <div class="vgrid" id="videos"></div>
+  </section>
+
+  <section id="steam">
+    <div id="steam-list"></div>
   </section>
 
   <section id="news">
@@ -228,6 +240,30 @@ function renderVideos(){
     </a>`).join('');
 }
 
+const signed = n => n == null ? '-' : (n > 0 ? '+' : '') + fmt(n);
+function renderSteam(){
+  const games = (DATA.steam||{}).games || [];
+  const box = document.getElementById('steam-list');
+  if (!games.length){
+    box.innerHTML = '<div class="empty">아직 Steam Top 100 데이터가 없습니다.</div>';
+    return;
+  }
+  box.innerHTML = `<table class="steam-table">
+    <thead><tr><th>순위</th><th>게임</th><th>현재 동접</th><th>증감</th><th>순위</th><th>오늘 최고</th></tr></thead>
+    <tbody>${games.map(g => {
+      const cls = g.delta_current > 0 ? 'up' : g.delta_current < 0 ? 'down' : 'flat';
+      const pct = g.delta_percent == null ? '' : ` (${g.delta_percent > 0 ? '+' : ''}${g.delta_percent}%)`;
+      return `<tr>
+        <td>#${g.rank}</td>
+        <td><a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.name)}</a></td>
+        <td>${fmt(g.current)}</td>
+        <td class="${cls}">${signed(g.delta_current)}${pct}</td>
+        <td class="${g.delta_rank > 0 ? 'up' : g.delta_rank < 0 ? 'down' : 'flat'}">${g.delta_rank == null ? '-' : g.delta_rank === 0 ? '-' : (g.delta_rank > 0 ? '▲' : '▼') + Math.abs(g.delta_rank)}</td>
+        <td>${fmt(g.peak_today)}</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
 function renderNewsChips(){
   const srcs = [...new Set((DATA.news||[]).map(a => a.source))];
   const box = document.getElementById('news-chips');
@@ -332,7 +368,7 @@ function renderEvents(){
 async function init(){
   try {
     const [d, ev] = await Promise.all([
-      fetch('data.json?t='+Date.now()).then(r => r.json()).catch(() => ({youtube:{},bilibili:[],news:[]})),
+      fetch('data.json?t='+Date.now()).then(r => r.json()).catch(() => ({youtube:{},steam:{games:[]},bilibili:[],news:[]})),
       fetch('events.json?t='+Date.now()).then(r => r.json()).catch(() => ({events:[]})),
     ]);
     DATA = d; EVENTS = ev.events || [];
@@ -344,6 +380,7 @@ async function init(){
         `<div class="warnbar">⚠️ ${d.warnings.map(esc).join('<br>⚠️ ')}</div>`;
     renderInsights();
     renderWatchlist();
+    renderSteam();
     renderNewsBrief();
     renderRegions();
     renderNewsChips();

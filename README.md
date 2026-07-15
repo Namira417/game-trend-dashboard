@@ -6,10 +6,12 @@
 
 | 파일 | 역할 |
 |---|---|
-| `index.html` | 대시보드 (트렌드 / 뉴스 / 행사 탭) |
+| `index.html` | 대시보드 (트렌드 / Steam / 뉴스 / 행사 탭) |
 | `collector.py` | 데이터 수집 스크립트 → `data.json` 생성 |
 | `events.json` | 행사 일정 (직접 편집해서 추가/수정) |
-| `data.json` | 수집된 데이터 (자동 생성, 현재는 샘플) |
+| `data.json` | 최신 수집 데이터 스냅샷 (자동 생성) |
+| `history.json` | 최근 7일 지역별 인기 영상 TOP5 히스토리 |
+| `steam_history.json` | 최근 7일 Steam Top 100 동접/순위 히스토리 |
 | `.github/workflows/update.yml` | 매일 07:00 KST 자동 수집 |
 
 ## 1단계 — YouTube API 키 발급 (5분, 무료)
