@@ -1,710 +1,5 @@
 [
  {
-  "date": "2026-10-25",
-  "games": [
-   {
-    "rank": 1,
-    "appid": "730",
-    "name": "Counter-Strike 2",
-    "current": 600278,
-    "peak_today": 1347645
-   },
-   {
-    "rank": 2,
-    "appid": "570",
-    "name": "Dota 2",
-    "current": 679360,
-    "peak_today": 1082992
-   },
-   {
-    "rank": 3,
-    "appid": "578080",
-    "name": "PUBG: BATTLEGROUNDS",
-    "current": 110966,
-    "peak_today": 817009
-   },
-   {
-    "rank": 4,
-    "appid": "431960",
-    "name": "Wallpaper Engine",
-    "current": 46196,
-    "peak_today": 126398
-   },
-   {
-    "rank": 5,
-    "appid": "1422450",
-    "name": "Deadlock",
-    "current": 0,
-    "peak_today": 257777
-   },
-   {
-    "rank": 6,
-    "appid": "1938090",
-    "name": "Call of Duty®",
-    "current": 182769,
-    "peak_today": 227622
-   },
-   {
-    "rank": 7,
-    "appid": "1172470",
-    "name": "Apex Legends™",
-    "current": 51736,
-    "peak_today": 233670
-   },
-   {
-    "rank": 8,
-    "appid": "1091500",
-    "name": "Cyberpunk 2077",
-    "current": 137944,
-    "peak_today": 162291
-   },
-   {
-    "rank": 9,
-    "appid": "1867240",
-    "name": "WARDOGS",
-    "current": 140506,
-    "peak_today": 201193
-   },
-   {
-    "rank": 10,
-    "appid": "3393110",
-    "name": "AION 2",
-    "current": 188416,
-    "peak_today": 256271
-   },
-   {
-    "rank": 11,
-    "appid": "271590",
-    "name": "Grand Theft Auto V Legacy",
-    "current": 37531,
-    "peak_today": 75747
-   },
-   {
-    "rank": 12,
-    "appid": "2868840",
-    "name": "Slay the Spire 2",
-    "current": 44837,
-    "peak_today": 102435
-   },
-   {
-    "rank": 13,
-    "appid": "322170",
-    "name": "Geometry Dash",
-    "current": 52536,
-    "peak_today": 77692
-   },
-   {
-    "rank": 14,
-    "appid": "2676230",
-    "name": "FiveM",
-    "current": 151340,
-    "peak_today": 197182
-   },
-   {
-    "rank": 15,
-    "appid": "236390",
-    "name": "War Thunder",
-    "current": 37747,
-    "peak_today": 98326
-   },
-   {
-    "rank": 16,
-    "appid": "359550",
-    "name": "Tom Clancy's Rainbow Six Siege",
-    "current": 77727,
-    "peak_today": 85352
-   },
-   {
-    "rank": 17,
-    "appid": "2357570",
-    "name": "Overwatch®",
-    "current": 62142,
-    "peak_today": 70900
-   },
-   {
-    "rank": 18,
-    "appid": "553850",
-    "name": "HELLDIVERS™ 2",
-    "current": 44945,
-    "peak_today": 71961
-   },
-   {
-    "rank": 19,
-    "appid": "381210",
-    "name": "Dead by Daylight",
-    "current": 51062,
-    "peak_today": 71988
-   },
-   {
-    "rank": 20,
-    "appid": "250900",
-    "name": "The Binding of Isaac: Rebirth",
-    "current": 33943,
-    "peak_today": 64348
-   },
-   {
-    "rank": 21,
-    "appid": "2767030",
-    "name": "Marvel Rivals",
-    "current": 61435,
-    "peak_today": 91784
-   },
-   {
-    "rank": 22,
-    "appid": "230410",
-    "name": "Warframe",
-    "current": 57300,
-    "peak_today": 91119
-   },
-   {
-    "rank": 23,
-    "appid": "892970",
-    "name": "Valheim",
-    "current": 84124,
-    "peak_today": 124046
-   },
-   {
-    "rank": 24,
-    "appid": "413150",
-    "name": "Stardew Valley",
-    "current": 42719,
-    "peak_today": 99123
-   },
-   {
-    "rank": 25,
-    "appid": "2807960",
-    "name": "Battlefield™ 6",
-    "current": 34749,
-    "peak_today": 54927
-   },
-   {
-    "rank": 26,
-    "appid": "105600",
-    "name": "Terraria",
-    "current": 24326,
-    "peak_today": 56090
-   },
-   {
-    "rank": 27,
-    "appid": "1808500",
-    "name": "ARC Raiders",
-    "current": 79784,
-    "peak_today": 99824
-   },
-   {
-    "rank": 28,
-    "appid": "1973530",
-    "name": "Limbus Company",
-    "current": 17327,
-    "peak_today": 48263
-   },
-   {
-    "rank": 29,
-    "appid": "3240220",
-    "name": "Grand Theft Auto V Enhanced",
-    "current": 31919,
-    "peak_today": 74735
-   },
-   {
-    "rank": 30,
-    "appid": "252490",
-    "name": "Rust",
-    "current": 70074,
-    "peak_today": 131944
-   },
-   {
-    "rank": 31,
-    "appid": "550",
-    "name": "Left 4 Dead 2",
-    "current": 33482,
-    "peak_today": 43605
-   },
-   {
-    "rank": 32,
-    "appid": "2507950",
-    "name": "Delta Force",
-    "current": 29307,
-    "peak_today": 125444
-   },
-   {
-    "rank": 33,
-    "appid": "292030",
-    "name": "The Witcher 3: Wild Hunt - Complete Edition",
-    "current": 36559,
-    "peak_today": 74684
-   },
-   {
-    "rank": 34,
-    "appid": "284160",
-    "name": "BeamNG.drive",
-    "current": 26938,
-    "peak_today": 43940
-   },
-   {
-    "rank": 35,
-    "appid": "227300",
-    "name": "Euro Truck Simulator 2",
-    "current": 20580,
-    "peak_today": 52089
-   },
-   {
-    "rank": 36,
-    "appid": "1203620",
-    "name": "Enshrouded",
-    "current": 74530,
-    "peak_today": 109752
-   },
-   {
-    "rank": 37,
-    "appid": "440",
-    "name": "Team Fortress 2",
-    "current": 79405,
-    "peak_today": 99228
-   },
-   {
-    "rank": 38,
-    "appid": "108600",
-    "name": "Project Zomboid",
-    "current": 52739,
-    "peak_today": 69291
-   },
-   {
-    "rank": 39,
-    "appid": "322330",
-    "name": "Don't Starve Together",
-    "current": 13704,
-    "peak_today": 70456
-   },
-   {
-    "rank": 40,
-    "appid": "438100",
-    "name": "VRChat",
-    "current": 43947,
-    "peak_today": 63887
-   },
-   {
-    "rank": 41,
-    "appid": "4080220",
-    "name": "App 4080220",
-    "current": 45398,
-    "peak_today": 74729
-   },
-   {
-    "rank": 42,
-    "appid": "1174180",
-    "name": "Red Dead Redemption 2",
-    "current": 27075,
-    "peak_today": 50243
-   },
-   {
-    "rank": 43,
-    "appid": "4126040",
-    "name": "Aniimo",
-    "current": 34872,
-    "peak_today": 49561
-   },
-   {
-    "rank": 44,
-    "appid": "394360",
-    "name": "Hearts of Iron IV",
-    "current": 26863,
-    "peak_today": 61892
-   },
-   {
-    "rank": 45,
-    "appid": "3405690",
-    "name": "EA SPORTS FC™ 26",
-    "current": 24925,
-    "peak_today": 37979
-   },
-   {
-    "rank": 46,
-    "appid": "1203220",
-    "name": "NARAKA: BLADEPOINT",
-    "current": 4758,
-    "peak_today": 69508
-   },
-   {
-    "rank": 47,
-    "appid": "1086940",
-    "name": "Baldur's Gate 3",
-    "current": 46150,
-    "peak_today": 57096
-   },
-   {
-    "rank": 48,
-    "appid": "3241660",
-    "name": "R.E.P.O.",
-    "current": 15502,
-    "peak_today": 28938
-   },
-   {
-    "rank": 49,
-    "appid": "4000",
-    "name": "Garry's Mod",
-    "current": 26752,
-    "peak_today": 38909
-   },
-   {
-    "rank": 50,
-    "appid": "1142710",
-    "name": "Total War: WARHAMMER III",
-    "current": 33403,
-    "peak_today": 58696
-   },
-   {
-    "rank": 51,
-    "appid": "1623730",
-    "name": "Palworld",
-    "current": 32590,
-    "peak_today": 63944
-   },
-   {
-    "rank": 52,
-    "appid": "252950",
-    "name": "Rocket League®",
-    "current": 24783,
-    "peak_today": 30612
-   },
-   {
-    "rank": 53,
-    "appid": "3527290",
-    "name": "PEAK",
-    "current": 19265,
-    "peak_today": 26820
-   },
-   {
-    "rank": 54,
-    "appid": "1304930",
-    "name": "The Outlast Trials",
-    "current": 12729,
-    "peak_today": 42688
-   },
-   {
-    "rank": 55,
-    "appid": "1364780",
-    "name": "Street Fighter™ 6",
-    "current": 7355,
-    "peak_today": 38545
-   },
-   {
-    "rank": 56,
-    "appid": "489830",
-    "name": "The Elder Scrolls V: Skyrim Special Edition",
-    "current": 33715,
-    "peak_today": 38626
-   },
-   {
-    "rank": 57,
-    "appid": "1449850",
-    "name": "Yu-Gi-Oh! Master Duel",
-    "current": 10407,
-    "peak_today": 22701
-   },
-   {
-    "rank": 58,
-    "appid": "2483190",
-    "name": "Forza Horizon 6",
-    "current": 8877,
-    "peak_today": 22318
-   },
-   {
-    "rank": 59,
-    "appid": "1245620",
-    "name": "ELDEN RING",
-    "current": 22581,
-    "peak_today": 37434
-   },
-   {
-    "rank": 60,
-    "appid": "1281930",
-    "name": "tModLoader",
-    "current": 13244,
-    "peak_today": 38879
-   },
-   {
-    "rank": 61,
-    "appid": "1665460",
-    "name": "eFootball™",
-    "current": 16161,
-    "peak_today": 24072
-   },
-   {
-    "rank": 62,
-    "appid": "1905180",
-    "name": "OBS Studio",
-    "current": 14054,
-    "peak_today": 32988
-   },
-   {
-    "rank": 63,
-    "appid": "221100",
-    "name": "DayZ",
-    "current": 42096,
-    "peak_today": 64165
-   },
-   {
-    "rank": 64,
-    "appid": "3419430",
-    "name": "Bongo Cat",
-    "current": 133940,
-    "peak_today": 164125
-   },
-   {
-    "rank": 65,
-    "appid": "289070",
-    "name": "Sid Meier’s Civilization® VI",
-    "current": 23089,
-    "peak_today": 47898
-   },
-   {
-    "rank": 66,
-    "appid": "2073850",
-    "name": "THE FINALS",
-    "current": 24711,
-    "peak_today": 29924
-   },
-   {
-    "rank": 67,
-    "appid": "4001890",
-    "name": "How to Fish",
-    "current": 6705,
-    "peak_today": 25202
-   },
-   {
-    "rank": 68,
-    "appid": "2300320",
-    "name": "Farming Simulator 25",
-    "current": 24953,
-    "peak_today": 51516
-   },
-   {
-    "rank": 69,
-    "appid": "1222670",
-    "name": "The Sims™ 4",
-    "current": 25725,
-    "peak_today": 32417
-   },
-   {
-    "rank": 70,
-    "appid": "632360",
-    "name": "Risk of Rain 2",
-    "current": 19388,
-    "peak_today": 22906
-   },
-   {
-    "rank": 71,
-    "appid": "2246340",
-    "name": "Monster Hunter Wilds",
-    "current": 12652,
-    "peak_today": 37974
-   },
-   {
-    "rank": 72,
-    "appid": "294100",
-    "name": "RimWorld",
-    "current": 27641,
-    "peak_today": 45651
-   },
-   {
-    "rank": 73,
-    "appid": "3678970",
-    "name": "TBH: Task Bar Hero",
-    "current": 50489,
-    "peak_today": 74925
-   },
-   {
-    "rank": 74,
-    "appid": "1085660",
-    "name": "Destiny 2",
-    "current": 33397,
-    "peak_today": 34840
-   },
-   {
-    "rank": 75,
-    "appid": "2183900",
-    "name": "Warhammer 40,000: Space Marine 2",
-    "current": 12733,
-    "peak_today": 25991
-   },
-   {
-    "rank": 76,
-    "appid": "244210",
-    "name": "Assetto Corsa",
-    "current": 8979,
-    "peak_today": 16815
-   },
-   {
-    "rank": 77,
-    "appid": "739630",
-    "name": "Phasmophobia",
-    "current": 13041,
-    "peak_today": 19401
-   },
-   {
-    "rank": 78,
-    "appid": "4019220",
-    "name": "Dressmaker",
-    "current": 25001,
-    "peak_today": 26286
-   },
-   {
-    "rank": 79,
-    "appid": "291550",
-    "name": "Brawlhalla",
-    "current": 13180,
-    "peak_today": 15033
-   },
-   {
-    "rank": 80,
-    "appid": "2073620",
-    "name": "Arena Breakout: Infinite",
-    "current": 20822,
-    "peak_today": 35797
-   },
-   {
-    "rank": 81,
-    "appid": "1366800",
-    "name": "Crosshair X",
-    "current": 33766,
-    "peak_today": 42389
-   },
-   {
-    "rank": 82,
-    "appid": "3513350",
-    "name": "Wuthering Waves",
-    "current": 7765,
-    "peak_today": 13808
-   },
-   {
-    "rank": 83,
-    "appid": "714010",
-    "name": "Aimlabs",
-    "current": 2574,
-    "peak_today": 7287
-   },
-   {
-    "rank": 84,
-    "appid": "261550",
-    "name": "Mount & Blade II: Bannerlord",
-    "current": 16606,
-    "peak_today": 38766
-   },
-   {
-    "rank": 85,
-    "appid": "813780",
-    "name": "Age of Empires II: Definitive Edition",
-    "current": 19215,
-    "peak_today": 28678
-   },
-   {
-    "rank": 86,
-    "appid": "945360",
-    "name": "Among Us",
-    "current": 8686,
-    "peak_today": 13428
-   },
-   {
-    "rank": 87,
-    "appid": "251570",
-    "name": "7 Days to Die",
-    "current": 19934,
-    "peak_today": 37683
-   },
-   {
-    "rank": 88,
-    "appid": "5354030",
-    "name": "Worst Class Ever Demo",
-    "current": 759,
-    "peak_today": 27832
-   },
-   {
-    "rank": 89,
-    "appid": "2139460",
-    "name": "Once Human",
-    "current": 28731,
-    "peak_today": 40512
-   },
-   {
-    "rank": 90,
-    "appid": "960090",
-    "name": "Bloons TD 6",
-    "current": 11193,
-    "peak_today": 13545
-   },
-   {
-    "rank": 91,
-    "appid": "3259780",
-    "name": "FINAL FANTASY RESONANCE",
-    "current": 27641,
-    "peak_today": 38182
-   },
-   {
-    "rank": 92,
-    "appid": "594650",
-    "name": "Hunt: Showdown 1896",
-    "current": 10037,
-    "peak_today": 29500
-   },
-   {
-    "rank": 93,
-    "appid": "1158310",
-    "name": "Crusader Kings III",
-    "current": 18442,
-    "peak_today": 29563
-   },
-   {
-    "rank": 94,
-    "appid": "2050650",
-    "name": "Resident Evil 4",
-    "current": 9089,
-    "peak_today": 18062
-   },
-   {
-    "rank": 95,
-    "appid": "4162040",
-    "name": "Zenless Zone Zero",
-    "current": 8347,
-    "peak_today": 13569
-   },
-   {
-    "rank": 96,
-    "appid": "1329410",
-    "name": "App 1329410",
-    "current": 1546,
-    "peak_today": 14382
-   },
-   {
-    "rank": 97,
-    "appid": "3932890",
-    "name": "Escape from Tarkov",
-    "current": 13650,
-    "peak_today": 38503
-   },
-   {
-    "rank": 98,
-    "appid": "2622380",
-    "name": "ELDEN RING NIGHTREIGN",
-    "current": 7496,
-    "peak_today": 31183
-   },
-   {
-    "rank": 99,
-    "appid": "582010",
-    "name": "Monster Hunter: World",
-    "current": 7150,
-    "peak_today": 26355
-   },
-   {
-    "rank": 100,
-    "appid": "629520",
-    "name": "Soundpad",
-    "current": 11345,
-    "peak_today": 18062
-   }
-  ]
- },
- {
   "date": "2026-10-27",
   "games": [
    {
@@ -4931,6 +4226,711 @@
     "name": "Among Us",
     "current": 6551,
     "peak_today": 10631
+   }
+  ]
+ },
+ {
+  "date": "2026-11-02",
+  "games": [
+   {
+    "rank": 1,
+    "appid": "730",
+    "name": "Counter-Strike 2",
+    "current": 497716,
+    "peak_today": 1270982
+   },
+   {
+    "rank": 2,
+    "appid": "570",
+    "name": "Dota 2",
+    "current": 336054,
+    "peak_today": 774241
+   },
+   {
+    "rank": 3,
+    "appid": "578080",
+    "name": "PUBG: BATTLEGROUNDS",
+    "current": 109573,
+    "peak_today": 781257
+   },
+   {
+    "rank": 4,
+    "appid": "431960",
+    "name": "Wallpaper Engine",
+    "current": 50897,
+    "peak_today": 122932
+   },
+   {
+    "rank": 5,
+    "appid": "4115450",
+    "name": "Phantom Blade Zero",
+    "current": 129240,
+    "peak_today": 775647
+   },
+   {
+    "rank": 6,
+    "appid": "1422450",
+    "name": "Deadlock",
+    "current": 0,
+    "peak_today": 239378
+   },
+   {
+    "rank": 7,
+    "appid": "1938090",
+    "name": "Call of Duty®",
+    "current": 164687,
+    "peak_today": 186417
+   },
+   {
+    "rank": 8,
+    "appid": "1172470",
+    "name": "Apex Legends™",
+    "current": 50281,
+    "peak_today": 204446
+   },
+   {
+    "rank": 9,
+    "appid": "1091500",
+    "name": "Cyberpunk 2077",
+    "current": 120778,
+    "peak_today": 166678
+   },
+   {
+    "rank": 10,
+    "appid": "271590",
+    "name": "Grand Theft Auto V Legacy",
+    "current": 30158,
+    "peak_today": 73902
+   },
+   {
+    "rank": 11,
+    "appid": "236390",
+    "name": "War Thunder",
+    "current": 39401,
+    "peak_today": 108197
+   },
+   {
+    "rank": 12,
+    "appid": "381210",
+    "name": "Dead by Daylight",
+    "current": 51319,
+    "peak_today": 76826
+   },
+   {
+    "rank": 13,
+    "appid": "2868840",
+    "name": "Slay the Spire 2",
+    "current": 49041,
+    "peak_today": 94460
+   },
+   {
+    "rank": 14,
+    "appid": "2676230",
+    "name": "FiveM",
+    "current": 130460,
+    "peak_today": 183115
+   },
+   {
+    "rank": 15,
+    "appid": "3241660",
+    "name": "R.E.P.O.",
+    "current": 38203,
+    "peak_today": 72051
+   },
+   {
+    "rank": 16,
+    "appid": "322170",
+    "name": "Geometry Dash",
+    "current": 47333,
+    "peak_today": 73196
+   },
+   {
+    "rank": 17,
+    "appid": "3393110",
+    "name": "AION 2",
+    "current": 155689,
+    "peak_today": 227442
+   },
+   {
+    "rank": 18,
+    "appid": "1867240",
+    "name": "WARDOGS",
+    "current": 94814,
+    "peak_today": 136014
+   },
+   {
+    "rank": 19,
+    "appid": "359550",
+    "name": "Tom Clancy's Rainbow Six Siege",
+    "current": 71024,
+    "peak_today": 75550
+   },
+   {
+    "rank": 20,
+    "appid": "230410",
+    "name": "Warframe",
+    "current": 61675,
+    "peak_today": 90228
+   },
+   {
+    "rank": 21,
+    "appid": "2357570",
+    "name": "Overwatch®",
+    "current": 56911,
+    "peak_today": 65041
+   },
+   {
+    "rank": 22,
+    "appid": "250900",
+    "name": "The Binding of Isaac: Rebirth",
+    "current": 29557,
+    "peak_today": 58463
+   },
+   {
+    "rank": 23,
+    "appid": "553850",
+    "name": "HELLDIVERS™ 2",
+    "current": 34169,
+    "peak_today": 53019
+   },
+   {
+    "rank": 24,
+    "appid": "1973530",
+    "name": "Limbus Company",
+    "current": 18884,
+    "peak_today": 51596
+   },
+   {
+    "rank": 25,
+    "appid": "413150",
+    "name": "Stardew Valley",
+    "current": 41939,
+    "peak_today": 89774
+   },
+   {
+    "rank": 26,
+    "appid": "252490",
+    "name": "Rust",
+    "current": 56732,
+    "peak_today": 128364
+   },
+   {
+    "rank": 27,
+    "appid": "3240220",
+    "name": "Grand Theft Auto V Enhanced",
+    "current": 28727,
+    "peak_today": 72966
+   },
+   {
+    "rank": 28,
+    "appid": "105600",
+    "name": "Terraria",
+    "current": 21387,
+    "peak_today": 48411
+   },
+   {
+    "rank": 29,
+    "appid": "4348910",
+    "name": "Probably Stolen - Cyberpunk Shopkeeper Sim",
+    "current": 47531,
+    "peak_today": 140480
+   },
+   {
+    "rank": 30,
+    "appid": "2767030",
+    "name": "Marvel Rivals",
+    "current": 53602,
+    "peak_today": 63561
+   },
+   {
+    "rank": 31,
+    "appid": "550",
+    "name": "Left 4 Dead 2",
+    "current": 26548,
+    "peak_today": 40922
+   },
+   {
+    "rank": 32,
+    "appid": "2807960",
+    "name": "Battlefield™ 6",
+    "current": 29552,
+    "peak_today": 43820
+   },
+   {
+    "rank": 33,
+    "appid": "1808500",
+    "name": "ARC Raiders",
+    "current": 66082,
+    "peak_today": 86993
+   },
+   {
+    "rank": 34,
+    "appid": "892970",
+    "name": "Valheim",
+    "current": 65341,
+    "peak_today": 92424
+   },
+   {
+    "rank": 35,
+    "appid": "440",
+    "name": "Team Fortress 2",
+    "current": 93320,
+    "peak_today": 107870
+   },
+   {
+    "rank": 36,
+    "appid": "2507950",
+    "name": "Delta Force",
+    "current": 29989,
+    "peak_today": 111437
+   },
+   {
+    "rank": 37,
+    "appid": "322330",
+    "name": "Don't Starve Together",
+    "current": 15538,
+    "peak_today": 72962
+   },
+   {
+    "rank": 38,
+    "appid": "227300",
+    "name": "Euro Truck Simulator 2",
+    "current": 15690,
+    "peak_today": 48608
+   },
+   {
+    "rank": 39,
+    "appid": "284160",
+    "name": "BeamNG.drive",
+    "current": 23406,
+    "peak_today": 39558
+   },
+   {
+    "rank": 40,
+    "appid": "438100",
+    "name": "VRChat",
+    "current": 43287,
+    "peak_today": 65036
+   },
+   {
+    "rank": 41,
+    "appid": "1203620",
+    "name": "Enshrouded",
+    "current": 55975,
+    "peak_today": 88101
+   },
+   {
+    "rank": 42,
+    "appid": "108600",
+    "name": "Project Zomboid",
+    "current": 44366,
+    "peak_today": 60224
+   },
+   {
+    "rank": 43,
+    "appid": "5335510",
+    "name": "Moon Sweepers",
+    "current": 55244,
+    "peak_today": 77045
+   },
+   {
+    "rank": 44,
+    "appid": "4126040",
+    "name": "Aniimo",
+    "current": 39826,
+    "peak_today": 63019
+   },
+   {
+    "rank": 45,
+    "appid": "292030",
+    "name": "The Witcher 3: Wild Hunt - Complete Edition",
+    "current": 24959,
+    "peak_today": 56904
+   },
+   {
+    "rank": 46,
+    "appid": "394360",
+    "name": "Hearts of Iron IV",
+    "current": 23349,
+    "peak_today": 59984
+   },
+   {
+    "rank": 47,
+    "appid": "4080220",
+    "name": "App 4080220",
+    "current": 30639,
+    "peak_today": 60880
+   },
+   {
+    "rank": 48,
+    "appid": "1174180",
+    "name": "Red Dead Redemption 2",
+    "current": 22549,
+    "peak_today": 42640
+   },
+   {
+    "rank": 49,
+    "appid": "3405690",
+    "name": "EA SPORTS FC™ 26",
+    "current": 20043,
+    "peak_today": 34794
+   },
+   {
+    "rank": 50,
+    "appid": "1203220",
+    "name": "NARAKA: BLADEPOINT",
+    "current": 5605,
+    "peak_today": 62688
+   },
+   {
+    "rank": 51,
+    "appid": "4000",
+    "name": "Garry's Mod",
+    "current": 23764,
+    "peak_today": 37753
+   },
+   {
+    "rank": 52,
+    "appid": "1086940",
+    "name": "Baldur's Gate 3",
+    "current": 43018,
+    "peak_today": 48814
+   },
+   {
+    "rank": 53,
+    "appid": "252950",
+    "name": "Rocket League®",
+    "current": 22243,
+    "peak_today": 27906
+   },
+   {
+    "rank": 54,
+    "appid": "1142710",
+    "name": "Total War: WARHAMMER III",
+    "current": 26706,
+    "peak_today": 48857
+   },
+   {
+    "rank": 55,
+    "appid": "3527290",
+    "name": "PEAK",
+    "current": 17470,
+    "peak_today": 21798
+   },
+   {
+    "rank": 56,
+    "appid": "1304930",
+    "name": "The Outlast Trials",
+    "current": 11031,
+    "peak_today": 32985
+   },
+   {
+    "rank": 57,
+    "appid": "1623730",
+    "name": "Palworld",
+    "current": 27545,
+    "peak_today": 51689
+   },
+   {
+    "rank": 58,
+    "appid": "489830",
+    "name": "The Elder Scrolls V: Skyrim Special Edition",
+    "current": 30378,
+    "peak_today": 35742
+   },
+   {
+    "rank": 59,
+    "appid": "1665460",
+    "name": "eFootball™",
+    "current": 14086,
+    "peak_today": 23455
+   },
+   {
+    "rank": 60,
+    "appid": "1449850",
+    "name": "Yu-Gi-Oh! Master Duel",
+    "current": 8372,
+    "peak_today": 20470
+   },
+   {
+    "rank": 61,
+    "appid": "1905180",
+    "name": "OBS Studio",
+    "current": 13578,
+    "peak_today": 32778
+   },
+   {
+    "rank": 62,
+    "appid": "2483190",
+    "name": "Forza Horizon 6",
+    "current": 8315,
+    "peak_today": 20500
+   },
+   {
+    "rank": 63,
+    "appid": "1364780",
+    "name": "Street Fighter™ 6",
+    "current": 7664,
+    "peak_today": 32795
+   },
+   {
+    "rank": 64,
+    "appid": "739630",
+    "name": "Phasmophobia",
+    "current": 12737,
+    "peak_today": 24607
+   },
+   {
+    "rank": 65,
+    "appid": "2300320",
+    "name": "Farming Simulator 25",
+    "current": 22094,
+    "peak_today": 52295
+   },
+   {
+    "rank": 66,
+    "appid": "1281930",
+    "name": "tModLoader",
+    "current": 12087,
+    "peak_today": 36648
+   },
+   {
+    "rank": 67,
+    "appid": "1245620",
+    "name": "ELDEN RING",
+    "current": 20185,
+    "peak_today": 33462
+   },
+   {
+    "rank": 68,
+    "appid": "221100",
+    "name": "DayZ",
+    "current": 36139,
+    "peak_today": 60258
+   },
+   {
+    "rank": 69,
+    "appid": "289070",
+    "name": "Sid Meier’s Civilization® VI",
+    "current": 22525,
+    "peak_today": 44933
+   },
+   {
+    "rank": 70,
+    "appid": "3419430",
+    "name": "Bongo Cat",
+    "current": 110990,
+    "peak_today": 142356
+   },
+   {
+    "rank": 71,
+    "appid": "3321460",
+    "name": "Crimson Desert Enhanced",
+    "current": 27611,
+    "peak_today": 38109
+   },
+   {
+    "rank": 72,
+    "appid": "1222670",
+    "name": "The Sims™ 4",
+    "current": 23751,
+    "peak_today": 28846
+   },
+   {
+    "rank": 73,
+    "appid": "2073850",
+    "name": "THE FINALS",
+    "current": 19484,
+    "peak_today": 24320
+   },
+   {
+    "rank": 74,
+    "appid": "3678970",
+    "name": "TBH: Task Bar Hero",
+    "current": 57158,
+    "peak_today": 75793
+   },
+   {
+    "rank": 75,
+    "appid": "1085660",
+    "name": "Destiny 2",
+    "current": 30339,
+    "peak_today": 31928
+   },
+   {
+    "rank": 76,
+    "appid": "294100",
+    "name": "RimWorld",
+    "current": 26387,
+    "peak_today": 43039
+   },
+   {
+    "rank": 77,
+    "appid": "244210",
+    "name": "Assetto Corsa",
+    "current": 7741,
+    "peak_today": 15803
+   },
+   {
+    "rank": 78,
+    "appid": "2073620",
+    "name": "Arena Breakout: Infinite",
+    "current": 18707,
+    "peak_today": 35500
+   },
+   {
+    "rank": 79,
+    "appid": "2246340",
+    "name": "Monster Hunter Wilds",
+    "current": 12507,
+    "peak_today": 32319
+   },
+   {
+    "rank": 80,
+    "appid": "813780",
+    "name": "Age of Empires II: Definitive Edition",
+    "current": 18692,
+    "peak_today": 27079
+   },
+   {
+    "rank": 81,
+    "appid": "1366800",
+    "name": "Crosshair X",
+    "current": 33217,
+    "peak_today": 38423
+   },
+   {
+    "rank": 82,
+    "appid": "1326470",
+    "name": "Sons Of The Forest",
+    "current": 12180,
+    "peak_today": 31574
+   },
+   {
+    "rank": 83,
+    "appid": "291550",
+    "name": "Brawlhalla",
+    "current": 10443,
+    "peak_today": 13374
+   },
+   {
+    "rank": 84,
+    "appid": "251570",
+    "name": "7 Days to Die",
+    "current": 19899,
+    "peak_today": 37190
+   },
+   {
+    "rank": 85,
+    "appid": "714010",
+    "name": "Aimlabs",
+    "current": 2267,
+    "peak_today": 6690
+   },
+   {
+    "rank": 86,
+    "appid": "261550",
+    "name": "Mount & Blade II: Bannerlord",
+    "current": 14136,
+    "peak_today": 35744
+   },
+   {
+    "rank": 87,
+    "appid": "4001890",
+    "name": "How to Fish",
+    "current": 5003,
+    "peak_today": 19014
+   },
+   {
+    "rank": 88,
+    "appid": "594650",
+    "name": "Hunt: Showdown 1896",
+    "current": 9199,
+    "peak_today": 27852
+   },
+   {
+    "rank": 89,
+    "appid": "3513350",
+    "name": "Wuthering Waves",
+    "current": 5536,
+    "peak_today": 10061
+   },
+   {
+    "rank": 90,
+    "appid": "2050650",
+    "name": "Resident Evil 4",
+    "current": 9530,
+    "peak_today": 18695
+   },
+   {
+    "rank": 91,
+    "appid": "2183900",
+    "name": "Warhammer 40,000: Space Marine 2",
+    "current": 9808,
+    "peak_today": 19484
+   },
+   {
+    "rank": 92,
+    "appid": "2139460",
+    "name": "Once Human",
+    "current": 20582,
+    "peak_today": 33742
+   },
+   {
+    "rank": 93,
+    "appid": "4019220",
+    "name": "Dressmaker",
+    "current": 20823,
+    "peak_today": 19398
+   },
+   {
+    "rank": 94,
+    "appid": "632360",
+    "name": "Risk of Rain 2",
+    "current": 13876,
+    "peak_today": 15924
+   },
+   {
+    "rank": 95,
+    "appid": "3932890",
+    "name": "Escape from Tarkov",
+    "current": 14783,
+    "peak_today": 43297
+   },
+   {
+    "rank": 96,
+    "appid": "3259780",
+    "name": "FINAL FANTASY RESONANCE",
+    "current": 20815,
+    "peak_today": 31208
+   },
+   {
+    "rank": 97,
+    "appid": "960090",
+    "name": "Bloons TD 6",
+    "current": 9616,
+    "peak_today": 11707
+   },
+   {
+    "rank": 98,
+    "appid": "2358720",
+    "name": "Black Myth: Wukong",
+    "current": 3902,
+    "peak_today": 23912
+   },
+   {
+    "rank": 99,
+    "appid": "945360",
+    "name": "Among Us",
+    "current": 7344,
+    "peak_today": 9393
+   },
+   {
+    "rank": 100,
+    "appid": "275850",
+    "name": "No Man's Sky",
+    "current": 15161,
+    "peak_today": 20271
    }
   ]
  }
